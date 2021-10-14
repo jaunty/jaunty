@@ -3,6 +3,7 @@ BEGIN;
 DROP TYPE IF EXISTS enum;
 
 DROP TABLE IF EXISTS users,
-    whitelist;
+    whitelist,
+    discord_tokens;
 
 COMMIT;

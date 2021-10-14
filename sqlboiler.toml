@@ -7,7 +7,7 @@ no-rows-affected = true
 [psql]
 dbname = "jaunty"
 host = "localhost"
-port = 5430
+port = 5432
 user = "jaunty"
 pass = "jaunty"
 sslmode = "disable"
