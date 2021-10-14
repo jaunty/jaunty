@@ -41,6 +41,11 @@ func (c *Client) GetCurrentUser(ctx context.Context, token string) (*tumult.User
 
 // GetUser fetches a Discord user by their snowflake.
 func (c *Client) GetUser(ctx context.Context, sf string) (*tumult.User, error) {
+	_, err := c.rdb.FetchValue(ctx, sf)
+	if err != nil {
+		return nil, err
+	}
+
 	res, err := c.Do(ctx,
 		fmt.Sprintf("/users/%s", sf),
 	)

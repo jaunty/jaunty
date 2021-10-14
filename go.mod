@@ -7,6 +7,7 @@ require (
 	github.com/friendsofgo/errors v0.9.2
 	github.com/go-chi/chi/v5 v5.0.4
 	github.com/go-redis/redis/v8 v8.11.4
+	github.com/gofrs/uuid v3.2.0+incompatible
 	github.com/holedaemon/tumult v0.0.0-20211002201713-4a57ba587b90
 	github.com/valyala/quicktemplate v1.7.0
 	github.com/volatiletech/sqlboiler/v4 v4.7.1
