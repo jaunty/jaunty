@@ -21,6 +21,8 @@ const (
 // Client interacts with Discord's REST API.
 // It implements the api.Client interface.
 type Client struct {
+	botToken string
+
 	cli   *http.Client
 	rdb   *redisx.Redis
 	oauth *oauth2.Config
@@ -28,6 +30,8 @@ type Client struct {
 
 // Options configures a Client.
 type Options struct {
+	BotToken string
+
 	Client *http.Client
 	Redis  *redisx.Redis
 	OAuth2 *oauth2.Config
@@ -36,6 +40,8 @@ type Options struct {
 // New creates a new Client with the given options.
 func New(opts *Options) (*Client, error) {
 	cli := &Client{
+		botToken: opts.BotToken,
+
 		cli:   opts.Client,
 		rdb:   opts.Redis,
 		oauth: opts.OAuth2,
@@ -57,12 +63,15 @@ func New(opts *Options) (*Client, error) {
 }
 
 // Do performs an HTTP request against Discord's API.
-func (c *Client) Do(ctx context.Context, url string, opts ...httpx.RequestOption) (*http.Response, error) {
-	req, err := httpx.NewRequest(ctx, url, opts...)
+func (c *Client) Do(ctx context.Context, uri string, opts ...httpx.RequestOption) (*http.Response, error) {
+	u := fmt.Sprintf("%s/%s", root, uri)
+
+	req, err := httpx.NewRequest(ctx, u, opts...)
 	if err != nil {
 		return nil, err
 	}
 
+	req.Header.Set("Authorization", fmt.Sprintf("Bot %s", c.botToken))
 	req.Header.Set("Content-Type", contentType)
 	req.Header.Set("Accept", accept)
 	req.Header.Set("User-Agent", userAgent)
