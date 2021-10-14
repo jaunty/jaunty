@@ -2,11 +2,13 @@ package web
 
 import (
 	"context"
+	"database/sql"
 	"embed"
 	"io/fs"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/gorilla/sessions"
 	"github.com/jaunty/jaunty/internal/pkg/api/discord"
 	"github.com/jaunty/jaunty/internal/pkg/redisx"
 	"github.com/zikaeroh/ctxlog"
@@ -28,14 +30,21 @@ func init() {
 
 // Options configures a Server.
 type Options struct {
-	Addr      string
-	RedisAddr string
+	Addr       string
+	SessionKey []byte
+
+	DB      *sql.DB
+	Redis   *redisx.Redis
+	Discord *discord.Client
 }
 
 // Server is responsible for serving the website and auth server.
 type Server struct {
 	addr string
 
+	store sessions.Store
+
+	db      *sql.DB
 	discord *discord.Client
 	redis   *redisx.Redis
 }
@@ -43,8 +52,11 @@ type Server struct {
 // New creates a new Server.
 func New(opts *Options) (*Server, error) {
 	s := &Server{
-		addr:  opts.Addr,
-		redis: redisx.Open(opts.RedisAddr),
+		addr:    opts.Addr,
+		db:      opts.DB,
+		discord: opts.Discord,
+		redis:   opts.Redis,
+		store:   sessions.NewCookieStore(opts.SessionKey),
 	}
 
 	return s, nil
@@ -55,6 +67,13 @@ func (s *Server) router() *chi.Mux {
 
 	r.Get("/", s.index)
 
+	r.Get("/login", s.authDiscord)
+	r.Get("/auth", s.authDiscord)
+	r.Get("/auth/callback", s.authDiscordCallback)
+
+	r.Get("/auth/destroy", s.destroyAuth)
+	r.Get("/logout", s.destroyAuth)
+
 	r.Handle("/static/*", http.StripPrefix("/static/", http.FileServer(http.FS(staticDir))))
 
 	return r
@@ -62,10 +81,6 @@ func (s *Server) router() *chi.Mux {
 
 // Start runs a Server.
 func (s *Server) Start(ctx context.Context) error {
-	if err := s.redis.Ping(ctx); err != nil {
-		return err
-	}
-
 	srv := &http.Server{
 		Handler: s.router(),
 		Addr:    s.addr,

@@ -1,6 +1,7 @@
 package web
 
 import (
+	"database/sql"
 	"errors"
 	"net/http"
 	"net/url"
@@ -8,6 +9,7 @@ import (
 
 	"github.com/go-redis/redis/v8"
 	"github.com/gofrs/uuid"
+	"github.com/jaunty/jaunty/internal/database/modelsx"
 	"github.com/jaunty/jaunty/internal/web/templates"
 	"github.com/zikaeroh/ctxlog"
 	"go.uber.org/zap"
@@ -62,10 +64,59 @@ func (s *Server) authDiscordCallback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err = s.discord.Exchange(ctx, r.FormValue("code"))
+	token, err := s.discord.Exchange(ctx, r.FormValue("code"))
 	if err != nil {
 		ctxlog.Error(ctx, "error exchanging code", zap.Error(err))
 		http.Error(w, "Error exchanging OAuth2 code", http.StatusInternalServerError)
+		return
+	}
+
+	user, err := s.discord.GetCurrentUser(ctx, token.AccessToken)
+	if err != nil {
+		ctxlog.Error(ctx, "error getting user from discord", zap.Error(err))
+		http.Error(w, "Error getting user from Discord", http.StatusInternalServerError)
+		return
+	}
+
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		ctxlog.Error(ctx, "error beginning transaction", zap.Error(err))
+		http.Error(w, "Unable to begin transaction", http.StatusInternalServerError)
+		return
+	}
+
+	defer func() {
+		if err := tx.Rollback(); err != nil {
+			if !errors.Is(err, sql.ErrTxDone) {
+				ctxlog.Error(ctx, "error rolling back transaction", zap.Error(err))
+			}
+		}
+	}()
+
+	if err := modelsx.UpsertToken(ctx, tx, user.ID, token); err != nil {
+		ctxlog.Error(ctx, "error upserting token", zap.Error(err))
+		http.Error(w, "Unable to upsert Discord token.", http.StatusInternalServerError)
+		return
+	}
+
+	sess := s.getSession(r)
+	sess.clear()
+	sess.setSnowflake(user.ID)
+	sess.setUsername(user.Username + "#" + user.Discriminator)
+	sess.setAvatar(user.Avatar.String)
+
+	if err := sess.save(w, r); err != nil {
+		ctxlog.Error(ctx, "error saving session", zap.Error(err))
+		http.Error(w, "Unable to save session", http.StatusInternalServerError)
+		return
+	}
+
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
+func (s *Server) destroyAuth(w http.ResponseWriter, r *http.Request) {
+	if err := s.destroySession(w, r); err != nil {
+		http.Error(w, "Error destroying session", http.StatusInternalServerError)
 		return
 	}
 }
