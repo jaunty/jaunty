@@ -45,3 +45,25 @@ func (r *Redis) FetchString(ctx context.Context, key string) (string, error) {
 	cmd := r.r.Get(ctx, key)
 	return cmd.Result()
 }
+
+// FetchValue fetches a nondescript value from Redis.
+func (r *Redis) FetchValue(ctx context.Context, key string) (interface{}, error) {
+	var i interface{}
+	cmd := r.r.Get(ctx, key)
+	if err := cmd.Scan(i); err != nil {
+		return nil, err
+	}
+
+	return i, nil
+}
+
+// SetValueWithExpiration sets a nondescript value with an expiration.
+func (r *Redis) SetValueWithExpiration(ctx context.Context, key string, val interface{}, expir time.Duration) error {
+	cmd := r.r.Set(ctx, key, val, expir)
+	return cmd.Err()
+}
+
+// SetValue sets a nondescript value with no expiration.
+func (r *Redis) SetValue(ctx context.Context, key string, val interface{}) error {
+	return r.SetValueWithExpiration(ctx, key, val, 0)
+}
