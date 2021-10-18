@@ -1,0 +1,43 @@
+{% code
+type IndexPage struct {
+    *BasePage
+}
+%}
+
+{% func (p *IndexPage) Title() %}Home{% endfunc %}
+
+{% func (p *IndexPage) Body() %}
+<div class="container">
+            <div class="columns is-centered">
+                <div class="column is-one-third has-text-centered">
+                    <h1 class="title">Welcome to Jaunty!</h1>
+                    <hr>
+                </div>
+            </div>
+            <div class="columns is-centered">
+                <div class="column is-half has-text-centered is-size-5">
+                    <p class="block">Jaunty is a Minecraft server community dedicated to providing friends of <a href="https://twitter.com/holedaemon" target="_blank">holedaemon</a> a lax, inclusive place to play the latest Minecraft updates.</p>
+
+                    <p class="block">
+                        Anyone is free to request whitelist, but only those that have prior approval are guaranteed to be accepted.
+                    </p>
+
+                    <div class="block">
+                        <p>Approval is more less limited to the following:</p>
+                        <ul style="list-style: square;">
+                            <li>You are a friend, mutual, or have otherwise been invited by holedaemon</li>
+                            <li>You have been invited by an existing member of Jaunty that has vouched for you to holedaemon</li>
+                        </ul>
+                    </div>
+
+                    <p class="block">
+                        These requirements may seem strict, but they're in place purely just to keep assholes out.
+                    </p>
+
+                    <p class="block">
+                        Click <a href="/join">here</a> to submit a whitelist request.
+                    </p>
+                </div>
+            </div>
+        </div>
+{% endfunc %}
