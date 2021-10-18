@@ -45,6 +45,8 @@ func New(opts *Options) (*Server, error) {
 func (s *Server) router() *chi.Mux {
 	r := chi.NewRouter()
 
+	r.Get("/", s.index)
+
 	r.Handle("/static/*", http.StripPrefix("/static/", http.FileServer(http.FS(staticDir))))
 
 	return r
