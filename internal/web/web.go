@@ -60,6 +60,8 @@ func (s *Server) Start(ctx context.Context) error {
 	}
 
 	go func() {
+		<-ctx.Done()
+
 		if err := srv.Shutdown(context.Background()); err != nil {
 			ctxlog.Error(ctx, "error shutting down server", zap.Error(err))
 		}
