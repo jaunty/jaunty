@@ -1,0 +1,14 @@
+wipe = true
+output = "internal/database/models"
+no-hooks = true
+no-tests = true
+no-rows-affected = true
+
+[psql]
+dbname = "jaunty"
+host = "localhost"
+port = 5430
+user = "jaunty"
+pass = "jaunty"
+sslmode = "disable"
+blacklist = ["schema_migrations"]
