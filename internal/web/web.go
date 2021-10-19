@@ -24,6 +24,7 @@ func init() {
 	}
 }
 
+// Options configures a Server.
 type Options struct {
 	Addr string
 }
