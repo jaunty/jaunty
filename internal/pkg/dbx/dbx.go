@@ -30,7 +30,7 @@ func Open(ctx context.Context, dsn string) (*sql.DB, error) {
 	for i := 0; i < MaxAttempts; i++ {
 		err = db.PingContext(ctx)
 		if err != nil {
-			ctxlog.Error(ctx, "error connecting to postgres db", zap.Int("attempt", i), zap.Int("max_attempts", MaxAttempts), zap.Duration("retry", Timeout))
+			ctxlog.Error(ctx, "error connecting to postgres db", zap.Error(err), zap.Int("attempt", i), zap.Int("max_attempts", MaxAttempts), zap.Duration("retry_in", Timeout))
 			time.Sleep(Timeout)
 			continue
 		}

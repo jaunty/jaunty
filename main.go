@@ -10,18 +10,19 @@ import (
 )
 
 func main() {
-	cli := cli.CLI{}
+	app := cli.CLI{}
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Kill)
 	defer stop()
 
-	ktx := kong.Parse(&cli,
+	ktx := kong.Parse(&app,
 		kong.Name("jaunty"),
 		kong.Description("CLI application for running Jaunty."),
 		kong.UsageOnError(),
+		kong.Configuration(cli.EnvLoader, ".env"),
 		kong.BindTo(ctx, (*context.Context)(nil)),
 	)
 
-	err := ktx.Run(cli.Debug)
+	err := ktx.Run(app.Debug)
 	ktx.FatalIfErrorf(err)
 }
