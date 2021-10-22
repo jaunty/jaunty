@@ -32,6 +32,10 @@ func (s *session) save(w http.ResponseWriter, r *http.Request) error {
 	return s.s.Save(r, w)
 }
 
+func (s *session) isNew() bool {
+	return s.s.IsNew
+}
+
 func (s *session) clear() {
 	s.s.Values = make(map[interface{}]interface{})
 }
@@ -50,4 +54,25 @@ func (s *session) setSnowflake(username string) {
 
 func (s *session) setAvatar(avatar string) {
 	s.setValue(sessionDiscordAvatar, avatar)
+}
+
+func (s *session) getValue(k string) string {
+	v, ok := s.s.Values[k].(string)
+	if !ok {
+		return ""
+	}
+
+	return v
+}
+
+func (s *session) getUsername() string {
+	return s.getValue(sessionDiscordUsername)
+}
+
+func (s *session) getAvatar() string {
+	return s.getValue(sessionDiscordAvatar)
+}
+
+func (s *session) getSnowflake() string {
+	return s.getValue(sessionDiscordSnowflake)
 }

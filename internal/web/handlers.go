@@ -3,6 +3,7 @@ package web
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 	"net/http"
 	"net/url"
 	"time"
@@ -19,7 +20,7 @@ import (
 const authTimeout = time.Hour
 
 func (s *Server) index(w http.ResponseWriter, r *http.Request) {
-	templates.WritePageTemplate(w, &templates.IndexPage{})
+	s.writePageTemplate(w, r, &templates.IndexPage{})
 }
 
 func (s *Server) authDiscord(w http.ResponseWriter, r *http.Request) {
@@ -95,7 +96,14 @@ func (s *Server) authDiscordCallback(w http.ResponseWriter, r *http.Request) {
 
 	if err := modelsx.UpsertToken(ctx, tx, user.ID, token); err != nil {
 		ctxlog.Error(ctx, "error upserting token", zap.Error(err))
+		fmt.Println(err)
 		http.Error(w, "Unable to upsert Discord token.", http.StatusInternalServerError)
+		return
+	}
+
+	if err := tx.Commit(); err != nil {
+		ctxlog.Error(ctx, "error committing transaction", zap.Error(err))
+		http.Error(w, "Unable to commit database transaction.", http.StatusInternalServerError)
 		return
 	}
 

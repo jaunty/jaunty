@@ -47,7 +47,7 @@ func WithMethod(m string) RequestOption {
 // NewRequest creates a new HTTP request with the given options.
 // If opts.Method is blank, the method is automatically set to GET.
 func NewRequest(ctx context.Context, url string, opts ...RequestOption) (*http.Request, error) {
-	var ro *requestOptions
+	ro := new(requestOptions)
 	for _, o := range opts {
 		o(ro)
 	}

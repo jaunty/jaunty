@@ -11,6 +11,8 @@ require (
 	github.com/gorilla/sessions v1.2.1
 	github.com/holedaemon/tumult v0.0.0-20211002201713-4a57ba587b90
 	github.com/jackc/pgx/v4 v4.13.0
+	github.com/joho/godotenv v1.4.0
+	github.com/rs/xid v1.2.1
 	github.com/valyala/quicktemplate v1.7.0
 	github.com/volatiletech/sqlboiler/v4 v4.7.1
 	github.com/volatiletech/strmangle v0.0.1
@@ -33,7 +35,6 @@ require (
 	github.com/jackc/pgproto3/v2 v2.1.1 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20200714003250-2b9c44734f2b // indirect
 	github.com/jackc/pgtype v1.8.1 // indirect
-	github.com/joho/godotenv v1.4.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/spf13/cast v1.4.1 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect

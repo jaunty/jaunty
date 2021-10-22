@@ -1,6 +1,7 @@
 {% interface Page {
     Title()
     Meta()
+    NavbarLogin()
     Body()
 }
 %}
@@ -34,6 +35,10 @@
                             Join
                         </a>
                     </div>
+
+                    <div class="navbar-end">
+                        {%= p.NavbarLogin() %}
+                    </div>
                 </div>
             </div>
         </nav>
@@ -43,7 +48,24 @@
 </html>
 {% endfunc %}
 
-{% code type BasePage struct{} %}
+{% code type User struct {
+    Username string
+    Snowflake string
+    Avatar string
+}
+%}
+
+{% code type BasePage struct{
+    User *User
+} %}
 {% func (p *BasePage) Title() %}Jaunty{% endfunc %}
+{% func (p *BasePage) NavbarLogin() %}
+    {% if p.User == nil %}
+        <a class="navbar-item" href="/login">Log in</a>
+    {% else %}
+        <a class="navbar-item" href="/dashboard">{%s p.User.Username %}</a>
+    {% endif %}
+{% endfunc %}
+
 {% func (p *BasePage) Body() %}{% endfunc %}
 {% func (p *BasePage) Meta() %}{% endfunc %}

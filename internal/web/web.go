@@ -8,9 +8,11 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 	"github.com/gorilla/sessions"
 	"github.com/jaunty/jaunty/internal/pkg/api/discord"
 	"github.com/jaunty/jaunty/internal/pkg/redisx"
+	"github.com/jaunty/jaunty/internal/web/templates"
 	"github.com/zikaeroh/ctxlog"
 	"go.uber.org/zap"
 )
@@ -62,8 +64,33 @@ func New(opts *Options) (*Server, error) {
 	return s, nil
 }
 
-func (s *Server) router() *chi.Mux {
+func (s *Server) writePageTemplate(w http.ResponseWriter, r *http.Request, p templates.Page) {
+	sess := s.getSession(r)
+
+	switch p := p.(type) {
+	case *templates.IndexPage:
+		p.BasePage = new(templates.BasePage)
+
+		if sess.isNew() {
+			p.BasePage.User = nil
+		} else {
+			p.BasePage.User = &templates.User{
+				Username:  sess.getUsername(),
+				Snowflake: sess.getSnowflake(),
+				Avatar:    sess.getAvatar(),
+			}
+		}
+	}
+
+	templates.WritePageTemplate(w, p)
+}
+
+func (s *Server) router(ctx context.Context) *chi.Mux {
 	r := chi.NewRouter()
+
+	r.Use(middleware.Recoverer)
+	r.Use(logger(ctxlog.FromContext(ctx)))
+	r.Use(requestID)
 
 	r.Get("/", s.index)
 
@@ -82,7 +109,7 @@ func (s *Server) router() *chi.Mux {
 // Start runs a Server.
 func (s *Server) Start(ctx context.Context) error {
 	srv := &http.Server{
-		Handler: s.router(),
+		Handler: s.router(ctx),
 		Addr:    s.addr,
 	}
 

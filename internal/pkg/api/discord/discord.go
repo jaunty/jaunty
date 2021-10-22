@@ -71,7 +71,10 @@ func (c *Client) Do(ctx context.Context, uri string, opts ...httpx.RequestOption
 		return nil, err
 	}
 
-	req.Header.Set("Authorization", fmt.Sprintf("Bot %s", c.botToken))
+	if req.Header.Get("Authorization") == "" {
+		req.Header.Set("Authorization", fmt.Sprintf("Bot %s", c.botToken))
+	}
+
 	req.Header.Set("Content-Type", contentType)
 	req.Header.Set("Accept", accept)
 	req.Header.Set("User-Agent", userAgent)
@@ -84,7 +87,7 @@ func (c *Client) FetchValue(ctx context.Context, key string) (interface{}, error
 	return c.rdb.FetchValue(ctx, key)
 }
 
-// SetVaue sets a value in the CLient's caching backend.
+// SetVaue sets a value in the Client's caching backend.
 func (c *Client) SetValue(ctx context.Context, key string, val interface{}) error {
 	return c.rdb.SetValue(ctx, key, val)
 }
