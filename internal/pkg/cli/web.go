@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/jaunty/jaunty/internal/pkg/api/discord"
+	"github.com/jaunty/jaunty/internal/pkg/api/mojang"
 	"github.com/jaunty/jaunty/internal/pkg/dbx"
 	"github.com/jaunty/jaunty/internal/pkg/redisx"
 	"github.com/jaunty/jaunty/internal/web"
@@ -65,6 +66,13 @@ func (w *Web) Run(ctx context.Context, debug bool) error {
 		return err
 	}
 
+	moj, err := mojang.New(&mojang.Options{
+		Redis: rdb,
+	})
+	if err != nil {
+		return err
+	}
+
 	opts := &web.Options{
 		Addr:       w.Addr,
 		SessionKey: []byte(w.SessionKey),
@@ -72,6 +80,7 @@ func (w *Web) Run(ctx context.Context, debug bool) error {
 		Redis:      rdb,
 
 		Discord: dsc,
+		Mojang:  moj,
 	}
 
 	srv, err := web.New(opts)

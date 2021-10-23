@@ -1,0 +1,27 @@
+{% code
+    type NewRequestPage struct {
+        *BasePage
+        Username string
+    }
+%}
+
+{% func (p *NewRequestPage) Title() %}Request submitted{% endfunc %}
+
+{% func (p *NewRequestPage) Body() %}
+    {% if p.BasePage.User == nil %}
+        <div class="modal is-active">
+            <div class="modal-background"></div>
+            <div class="modal-content">
+                <h1 class="title">You shouldn't be here</h1>
+                <h2 class="subtitle">Best head back the way you came</h2>
+            </div>
+        </div>
+    {% else %}
+        <div class="columns is-centered">
+            <div class="column is-half" has-text-centered>
+                <h1 class="title">Request Submitted</h1>
+                <h2 class="subtitle">Keep an eye on the Discord for updates!</h2>
+            </div>
+        </div>
+    {% endif %}
+{% endfunc %}

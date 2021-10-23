@@ -2,6 +2,7 @@
     Title()
     Meta()
     NavbarLogin()
+    NavbarMargin()
     Body()
 }
 %}
@@ -17,7 +18,7 @@
         {%= p.Meta() %}
     </head>
     <body>
-        <nav class="navbar is-jaunty mb-5">
+        <nav class="navbar is-jaunty {%= p.NavbarMargin() %}">
             <div class="container">
                 <div class="navbar-brand is-size-5">
                     <a class="navbar-item" href="/">ᕕ(՞ᗜ՞)ᕗ</a>
@@ -65,6 +66,10 @@
     {% else %}
         <a class="navbar-item" href="/dashboard">{%s p.User.Username %}</a>
     {% endif %}
+{% endfunc %}
+
+{% func (p *BasePage) NavbarMargin() %}
+mb-5
 {% endfunc %}
 
 {% func (p *BasePage) Body() %}{% endfunc %}

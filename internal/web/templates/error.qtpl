@@ -1,0 +1,21 @@
+{% code 
+type ErrorPage struct {
+    *BasePage
+    Message string
+}
+%}
+
+{% func (p *ErrorPage) Title() %}Error{% endfunc %}
+
+{% func (p *ErrorPage) NavbarMargin() %}{% endfunc %}
+
+{% func (p *ErrorPage) Body() %}
+<section class="hero is-large">
+    <div class="hero-body">
+        <div class="container">
+            <h1 class="title">Uh Oh Sisters!!!!1!!!11!!!!!</h1>
+            <h2 class="subtitle">{%s p.Message %}</h2>
+        </div>
+    </div>
+</section>
+{% endfunc %}
