@@ -192,5 +192,5 @@ func (s *Server) destroyAuth(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	s.writePageTemplate(w, r, &templates.IndexPage{})
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
