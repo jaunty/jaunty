@@ -205,139 +205,151 @@ func (p *BasePage) StreamNavbarLogin(qw422016 *qt422016.Writer) {
 	} else {
 //line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:66
 		qw422016.N().S(`
-        <a class="navbar-item" href="/dashboard">`)
-//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:67
+        <div class="navbar-item has-dropdown is-hoverable">
+            <a class="navbar-link">`)
+//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:68
 		qw422016.E().S(p.User.Username)
-//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:67
+//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:68
 		qw422016.N().S(`</a>
+
+            <div class="navbar-dropdown">
+                <a class="navbar-item" href="/dashboard">
+                    Dashboard
+                </a>
+                <hr class="navbar-divider">
+                <a class="navbar-item" href="/logout">
+                    Log out
+                </a>
+            </div>
+        </div>
     `)
-//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:68
+//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:80
 	}
-//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:68
+//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:80
 	qw422016.N().S(`
 `)
-//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:69
+//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:81
 }
 
-//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:69
+//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:81
 func (p *BasePage) WriteNavbarLogin(qq422016 qtio422016.Writer) {
-//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:69
+//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:81
 	qw422016 := qt422016.AcquireWriter(qq422016)
-//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:69
+//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:81
 	p.StreamNavbarLogin(qw422016)
-//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:69
+//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:81
 	qt422016.ReleaseWriter(qw422016)
-//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:69
+//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:81
 }
 
-//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:69
+//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:81
 func (p *BasePage) NavbarLogin() string {
-//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:69
+//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:81
 	qb422016 := qt422016.AcquireByteBuffer()
-//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:69
+//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:81
 	p.WriteNavbarLogin(qb422016)
-//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:69
+//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:81
 	qs422016 := string(qb422016.B)
-//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:69
+//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:81
 	qt422016.ReleaseByteBuffer(qb422016)
-//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:69
+//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:81
 	return qs422016
-//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:69
+//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:81
 }
 
-//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:71
+//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:83
 func (p *BasePage) StreamNavbarMargin(qw422016 *qt422016.Writer) {
-//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:71
+//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:83
 	qw422016.N().S(`
 mb-5
 `)
-//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:73
+//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:85
 }
 
-//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:73
+//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:85
 func (p *BasePage) WriteNavbarMargin(qq422016 qtio422016.Writer) {
-//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:73
+//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:85
 	qw422016 := qt422016.AcquireWriter(qq422016)
-//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:73
+//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:85
 	p.StreamNavbarMargin(qw422016)
-//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:73
+//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:85
 	qt422016.ReleaseWriter(qw422016)
-//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:73
+//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:85
 }
 
-//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:73
+//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:85
 func (p *BasePage) NavbarMargin() string {
-//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:73
+//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:85
 	qb422016 := qt422016.AcquireByteBuffer()
-//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:73
+//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:85
 	p.WriteNavbarMargin(qb422016)
-//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:73
+//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:85
 	qs422016 := string(qb422016.B)
-//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:73
+//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:85
 	qt422016.ReleaseByteBuffer(qb422016)
-//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:73
+//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:85
 	return qs422016
-//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:73
+//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:85
 }
 
-//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:75
+//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:87
 func (p *BasePage) StreamBody(qw422016 *qt422016.Writer) {
-//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:75
+//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:87
 }
 
-//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:75
+//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:87
 func (p *BasePage) WriteBody(qq422016 qtio422016.Writer) {
-//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:75
+//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:87
 	qw422016 := qt422016.AcquireWriter(qq422016)
-//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:75
+//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:87
 	p.StreamBody(qw422016)
-//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:75
+//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:87
 	qt422016.ReleaseWriter(qw422016)
-//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:75
+//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:87
 }
 
-//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:75
+//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:87
 func (p *BasePage) Body() string {
-//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:75
+//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:87
 	qb422016 := qt422016.AcquireByteBuffer()
-//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:75
+//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:87
 	p.WriteBody(qb422016)
-//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:75
+//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:87
 	qs422016 := string(qb422016.B)
-//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:75
+//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:87
 	qt422016.ReleaseByteBuffer(qb422016)
-//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:75
+//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:87
 	return qs422016
-//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:75
+//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:87
 }
 
-//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:76
+//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:88
 func (p *BasePage) StreamMeta(qw422016 *qt422016.Writer) {
-//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:76
+//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:88
 }
 
-//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:76
+//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:88
 func (p *BasePage) WriteMeta(qq422016 qtio422016.Writer) {
-//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:76
+//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:88
 	qw422016 := qt422016.AcquireWriter(qq422016)
-//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:76
+//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:88
 	p.StreamMeta(qw422016)
-//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:76
+//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:88
 	qt422016.ReleaseWriter(qw422016)
-//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:76
+//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:88
 }
 
-//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:76
+//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:88
 func (p *BasePage) Meta() string {
-//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:76
+//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:88
 	qb422016 := qt422016.AcquireByteBuffer()
-//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:76
+//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:88
 	p.WriteMeta(qb422016)
-//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:76
+//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:88
 	qs422016 := string(qb422016.B)
-//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:76
+//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:88
 	qt422016.ReleaseByteBuffer(qb422016)
-//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:76
+//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:88
 	return qs422016
-//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:76
+//line /home/max/git/jaunty/redux/internal/web/templates/base.qtpl:88
 }

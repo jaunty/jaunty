@@ -64,7 +64,19 @@
     {% if p.User == nil %}
         <a class="navbar-item" href="/login">Log in</a>
     {% else %}
-        <a class="navbar-item" href="/dashboard">{%s p.User.Username %}</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+            <a class="navbar-link">{%s p.User.Username %}</a>
+
+            <div class="navbar-dropdown">
+                <a class="navbar-item" href="/dashboard">
+                    Dashboard
+                </a>
+                <hr class="navbar-divider">
+                <a class="navbar-item" href="/logout">
+                    Log out
+                </a>
+            </div>
+        </div>
     {% endif %}
 {% endfunc %}
 
