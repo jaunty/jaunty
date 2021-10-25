@@ -1,0 +1,25 @@
+{% code
+    type SuccessPage struct {
+        *BasePage
+        PageTitle string
+        Header string
+        SubHeader string
+    }
+%}
+
+{% func (p *SuccessPage) Title() %}
+    {%- if p.PageTitle == "" -%}
+        Success
+    {% else %}
+        {%s p.PageTitle %}
+    {%- endif -%}
+{% endfunc %}
+
+{% func (p *SuccessPage) Body() %}
+    <div class="columns is-centered">
+        <div class="column is-narrow has-text-centered">
+            <h1 class="title">{%s p.Header %}</h1>
+            <h2 class="subtitle">{%s p.SubHeader %}</h2>
+        </div>
+    </div>
+{% endfunc %}

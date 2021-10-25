@@ -68,22 +68,19 @@ func New(opts *Options) (*Server, error) {
 	return s, nil
 }
 
-func (s *Server) writePageTemplate(w http.ResponseWriter, r *http.Request, p templates.Page) {
+func (s *Server) basePage(r *http.Request) *templates.BasePage {
+	sess := s.getSession(r)
+	bp := new(templates.BasePage)
 
-	switch p := p.(type) {
-	case *templates.IndexPage:
-		p.BasePage = s.makeBasePage(r)
-	case *templates.JoinPage:
-		p.BasePage = s.makeBasePage(r)
-	case *templates.NewRequestPage:
-		p.BasePage = s.makeBasePage(r)
-	case *templates.ErrorPage:
-		p.BasePage = s.makeBasePage(r)
-	case *templates.DashboardPage:
-		p.BasePage = s.makeBasePage(r)
+	if !sess.isNew() {
+		bp.User = &templates.User{
+			Username:  sess.getUsername(),
+			Snowflake: sess.getSnowflake(),
+			Avatar:    sess.getAvatar(),
+		}
 	}
 
-	templates.WritePageTemplate(w, p)
+	return bp
 }
 
 func (s *Server) router(ctx context.Context) *chi.Mux {
@@ -98,6 +95,8 @@ func (s *Server) router(ctx context.Context) *chi.Mux {
 	r.Post("/join", s.postJoin)
 
 	r.Get("/dashboard", s.dashboard)
+	r.Get("/account/delete", s.accountDelete)
+	r.Post("/account/delete", s.postAccountDelete)
 
 	r.Get("/login", s.authDiscord)
 	r.Get("/auth", s.authDiscord)
@@ -107,14 +106,22 @@ func (s *Server) router(ctx context.Context) *chi.Mux {
 	r.Get("/logout", s.destroyAuth)
 
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
-		s.writePageTemplate(w, r, &templates.ErrorPage{
-			Message: "Whatever you're looking for ain't here",
+		templates.WritePageTemplate(w, &templates.ErrorPage{
+			BasePage: s.basePage(r),
+			Message:  "Whatever you're looking for ain't here",
 		})
 	})
 
 	r.Handle("/static/*", http.StripPrefix("/static/", http.FileServer(http.FS(staticDir))))
 
 	return r
+}
+
+func (s *Server) serveError(w http.ResponseWriter, r *http.Request, msg string) {
+	templates.WritePageTemplate(w, &templates.ErrorPage{
+		BasePage: s.basePage(r),
+		Message:  msg,
+	})
 }
 
 // Start runs a Server.

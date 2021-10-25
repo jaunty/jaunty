@@ -24,48 +24,52 @@ import (
 const authTimeout = time.Hour
 
 func (s *Server) index(w http.ResponseWriter, r *http.Request) {
-	s.writePageTemplate(w, r, &templates.IndexPage{})
+	templates.WritePageTemplate(w, &templates.IndexPage{
+		BasePage: s.basePage(r),
+	})
 }
 
 func (s *Server) join(w http.ResponseWriter, r *http.Request) {
-	s.writePageTemplate(w, r, &templates.JoinPage{})
+	templates.WritePageTemplate(w, &templates.JoinPage{
+		BasePage: s.basePage(r),
+	})
 }
 
 func (s *Server) postJoin(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	if err := r.ParseForm(); err != nil {
-		s.writeError(w, r, "Unable to parse given form.")
+		s.serveError(w, r, "Unable to parse given form.")
 		return
 	}
 
 	un := r.FormValue("username")
 	if un == "" {
-		s.writeError(w, r, "Minecraft username cannot be blank")
+		s.serveError(w, r, "Minecraft username cannot be blank")
 		return
 	}
 
 	uid, err := s.mojang.FetchUUIDByUsername(ctx, un)
 	if err != nil {
 		if errors.Is(err, mojang.ErrNotFound) {
-			s.writeError(w, r, "Username does not exist according to Mojang")
+			s.serveError(w, r, "Username does not exist according to Mojang")
 			return
 		}
 
 		ctxlog.Error(ctx, "error getting uuid by username from Mojang", zap.Error(err))
-		s.writeError(w, r, "Unable to convert Minecraft username into UUID")
+		s.serveError(w, r, "Unable to convert Minecraft username into UUID")
 		return
 	}
 
 	exists, err := models.Whitelists(qm.Where("uuid = ?", uid)).Exists(ctx, s.db)
 	if err != nil {
 		ctxlog.Error(ctx, "error getting whitelist from database", zap.Error(err))
-		s.writeError(w, r, "Error checking request's existence in the database")
+		s.serveError(w, r, "Error checking request's existence in the database")
 		return
 	}
 
 	if exists {
-		s.writeError(w, r, "A whitelist request already exists for the given account")
+		s.serveError(w, r, "A whitelist request already exists for the given account")
 		return
 	}
 
@@ -78,11 +82,12 @@ func (s *Server) postJoin(w http.ResponseWriter, r *http.Request) {
 
 	if err := wh.Insert(ctx, s.db, boil.Infer()); err != nil {
 		ctxlog.Error(ctx, "error creating whitelist request", zap.Error(err))
-		s.writeError(w, r, "Error inserting whitelist request into the database")
+		s.serveError(w, r, "Error inserting whitelist request into the database")
 		return
 	}
 
-	s.writePageTemplate(w, r, &templates.NewRequestPage{
+	templates.WritePageTemplate(w, &templates.NewRequestPage{
+		BasePage: s.basePage(r),
 		Username: un,
 	})
 }
@@ -94,7 +99,7 @@ func (s *Server) dashboard(w http.ResponseWriter, r *http.Request) {
 	wr, err := models.Whitelists(qm.Where("sf = ?", sess.getSnowflake())).All(ctx, s.db)
 	if err != nil {
 		ctxlog.Error(ctx, "error getting whitelist requests", zap.Error(err), zap.String("sf", sess.getSnowflake()))
-		s.writeError(w, r, "Unable to fetch whitelist requests")
+		s.serveError(w, r, "Unable to fetch whitelist requests")
 		return
 	}
 
@@ -103,16 +108,42 @@ func (s *Server) dashboard(w http.ResponseWriter, r *http.Request) {
 		name, err := s.mojang.FetchUsernameByUUID(ctx, wr.UUID)
 		if err != nil {
 			ctxlog.Error(ctx, "error getting username by uuid", zap.Error(err))
-			s.writeError(w, r, "Error getting username by UUID.")
+			s.serveError(w, r, "Error getting username by UUID.")
 			return
 		}
 
 		names[wr.UUID] = name
 	}
 
-	s.writePageTemplate(w, r, &templates.DashboardPage{
+	templates.WritePageTemplate(w, &templates.DashboardPage{
+		BasePage:      s.basePage(r),
 		Requests:      wr,
 		ResolvedUUIDs: names,
+	})
+}
+
+func (s *Server) accountDelete(w http.ResponseWriter, r *http.Request) {
+	templates.WritePageTemplate(w, &templates.AccountDeletePage{
+		BasePage: s.basePage(r),
+	})
+}
+
+func (s *Server) postAccountDelete(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	sess := s.getSession(r)
+	sf := sess.getSnowflake()
+
+	if err := models.Users(qm.Where("sf = ?", sf)).DeleteAll(ctx, s.db); err != nil {
+		ctxlog.Error(ctx, "error deleting user from database", zap.Error(err))
+		s.serveError(w, r, "Error deleting user from database???")
+		return
+	}
+
+	templates.WritePageTemplate(w, &templates.SuccessPage{
+		BasePage:  s.basePage(r),
+		PageTitle: "Account Deleted",
+		Header:    "Account has been deleted",
+		SubHeader: "See You Space Cowboy or something idk I didn't read the book",
 	})
 }
 
@@ -129,7 +160,7 @@ func (s *Server) authDiscord(w http.ResponseWriter, r *http.Request) {
 
 	if err := s.redis.SetStringWithExpiration(ctx, state, redir, authTimeout); err != nil {
 		ctxlog.Error(ctx, "error setting state in redis", zap.Error(err))
-		s.writeError(w, r, "Error caching state")
+		s.serveError(w, r, "Error caching state")
 		return
 	}
 
@@ -142,40 +173,40 @@ func (s *Server) authDiscordCallback(w http.ResponseWriter, r *http.Request) {
 
 	state := r.FormValue("state")
 	if state == "" {
-		s.writeError(w, r, "Unexpected state was returned")
+		s.serveError(w, r, "Unexpected state was returned")
 		return
 	}
 
 	_, err := s.redis.FetchString(ctx, state)
 	if err != nil {
 		if errors.Is(err, redis.Nil) {
-			s.writeError(w, r, "Given state does not match")
+			s.serveError(w, r, "Given state does not match")
 			return
 		}
 
 		ctxlog.Error(ctx, "error getting state from redis", zap.Error(err))
-		s.writeError(w, r, "Unable to retrieve state from Redis")
+		s.serveError(w, r, "Unable to retrieve state from Redis")
 		return
 	}
 
 	token, err := s.discord.Exchange(ctx, r.FormValue("code"))
 	if err != nil {
 		ctxlog.Error(ctx, "error exchanging code", zap.Error(err))
-		s.writeError(w, r, "Error exchanging OAuth2 code for access token")
+		s.serveError(w, r, "Error exchanging OAuth2 code for access token")
 		return
 	}
 
 	user, err := s.discord.GetCurrentUser(ctx, token.AccessToken)
 	if err != nil {
 		ctxlog.Error(ctx, "error getting user from discord", zap.Error(err))
-		s.writeError(w, r, "Error getting user from Discord's API")
+		s.serveError(w, r, "Error getting user from Discord's API")
 		return
 	}
 
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
 		ctxlog.Error(ctx, "error beginning transaction", zap.Error(err))
-		s.writeError(w, r, "Error starting database transaction")
+		s.serveError(w, r, "Error starting database transaction")
 		return
 	}
 
@@ -190,13 +221,13 @@ func (s *Server) authDiscordCallback(w http.ResponseWriter, r *http.Request) {
 	if err := modelsx.UpsertToken(ctx, tx, user.ID, token); err != nil {
 		ctxlog.Error(ctx, "error upserting token", zap.Error(err))
 		fmt.Println(err)
-		s.writeError(w, r, "Error upserting OAuth2 token in the database")
+		s.serveError(w, r, "Error upserting OAuth2 token in the database")
 		return
 	}
 
 	if err := tx.Commit(); err != nil {
 		ctxlog.Error(ctx, "error committing transaction", zap.Error(err))
-		s.writeError(w, r, "Error committing database transaction")
+		s.serveError(w, r, "Error committing database transaction")
 		return
 	}
 
@@ -208,7 +239,7 @@ func (s *Server) authDiscordCallback(w http.ResponseWriter, r *http.Request) {
 
 	if err := sess.save(w, r); err != nil {
 		ctxlog.Error(ctx, "error saving session", zap.Error(err))
-		s.writeError(w, r, "Error saving session")
+		s.serveError(w, r, "Error saving session")
 		return
 	}
 
@@ -217,7 +248,7 @@ func (s *Server) authDiscordCallback(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) destroyAuth(w http.ResponseWriter, r *http.Request) {
 	if err := s.destroySession(w, r); err != nil {
-		s.writeError(w, r, "Error destroying session???")
+		s.serveError(w, r, "Error destroying session???")
 		return
 	}
 
