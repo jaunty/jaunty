@@ -1,0 +1,84 @@
+{% 
+    import (
+        "github.com/jaunty/jaunty/internal/database/models"
+
+        "time"
+    )
+%}
+
+{% code
+    var (
+        loc *time.Location
+        err error
+    )
+
+    func init() {
+        loc, err = time.LoadLocation("EST")
+        if err != nil {
+            panic(err)
+        }        
+    }
+%}
+
+{% code
+    type DashboardPage struct {
+        *BasePage
+        Requests []*models.Whitelist
+        ResolvedUUIDs map[string]string
+    }
+%}
+
+{% func (p *DashboardPage) Title() %}Dashboard{% endfunc %}
+
+{% func (p *DashboardPage) Body() %}
+<div class="container">
+    <div class="block">
+        <h1 class="title">Make Your Peace</h1>
+        <h2 class="subtitle">Account configuration stuff</h2>
+    </div>
+
+    <div class="field is-grouped mb-5">
+        <p class="control">
+            <a href="/account/delete" class="button is-jaunty">
+                Account Deletion
+            </a>
+        </p>
+    </div>
+
+    <div class="mb-6">
+        <h1 class="title">Whitelist Requests</h1>
+        <h2 class="subtitle">Every single whitelist request you've ever made, all right here.</h2>
+    </div>
+
+    {% if len(p.Requests) == 0 %}
+        <div>
+            <h1 class="title">Literally none.</h1>
+            <h2 class="subtitle">Ok.</h2>
+        </div>
+    {% else %}
+        <div class="columns">
+            {% for _, wr := range p.Requests %}
+                <div class="column is-narrow box">
+                    <ul class="is-size-5">
+                        <li>{%s p.ResolvedUUIDs[wr.UUID] %}</li>
+                        <li>{%s wr.CreatedAt.In(loc).Format("01/02/2006 03:04pm") %}</li>
+                        <li>
+                            <span class="tag is-uppercase
+                                {%- switch wr.WhitelistStatus -%}
+                                {% case "pending" %}
+                                    is-warning
+                                {% case "approved" %}
+                                    is-success
+                                {% case "rejected" %}
+                                    is-danger
+                                {%- endswitch -%}
+                                ">
+                                {%s wr.WhitelistStatus %}
+                            </span>
+                        </li>
+                    </ul>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+{% endfunc %}

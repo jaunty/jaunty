@@ -87,6 +87,35 @@ func (s *Server) postJoin(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+func (s *Server) dashboard(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	sess := s.getSession(r)
+
+	wr, err := models.Whitelists(qm.Where("sf = ?", sess.getSnowflake())).All(ctx, s.db)
+	if err != nil {
+		ctxlog.Error(ctx, "error getting whitelist requests", zap.Error(err), zap.String("sf", sess.getSnowflake()))
+		s.writeError(w, r, "Unable to fetch whitelist requests")
+		return
+	}
+
+	names := make(map[string]string)
+	for _, wr := range wr {
+		name, err := s.mojang.FetchUsernameByUUID(ctx, wr.UUID)
+		if err != nil {
+			ctxlog.Error(ctx, "error getting username by uuid", zap.Error(err))
+			s.writeError(w, r, "Error getting username by UUID.")
+			return
+		}
+
+		names[wr.UUID] = name
+	}
+
+	s.writePageTemplate(w, r, &templates.DashboardPage{
+		Requests:      wr,
+		ResolvedUUIDs: names,
+	})
+}
+
 func (s *Server) authDiscord(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 

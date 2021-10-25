@@ -79,6 +79,8 @@ func (s *Server) writePageTemplate(w http.ResponseWriter, r *http.Request, p tem
 		p.BasePage = s.makeBasePage(r)
 	case *templates.ErrorPage:
 		p.BasePage = s.makeBasePage(r)
+	case *templates.DashboardPage:
+		p.BasePage = s.makeBasePage(r)
 	}
 
 	templates.WritePageTemplate(w, p)
@@ -94,6 +96,8 @@ func (s *Server) router(ctx context.Context) *chi.Mux {
 	r.Get("/", s.index)
 	r.Get("/join", s.join)
 	r.Post("/join", s.postJoin)
+
+	r.Get("/dashboard", s.dashboard)
 
 	r.Get("/login", s.authDiscord)
 	r.Get("/auth", s.authDiscord)

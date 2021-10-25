@@ -6,6 +6,7 @@ require (
 	github.com/alecthomas/kong v0.2.18-0.20211015044717-749d3f0752b5
 	github.com/friendsofgo/errors v0.9.2
 	github.com/go-chi/chi/v5 v5.0.4
+	github.com/go-redis/redis v6.15.9+incompatible
 	github.com/go-redis/redis/v8 v8.11.4
 	github.com/gofrs/uuid v4.0.0+incompatible
 	github.com/gorilla/sessions v1.2.1
