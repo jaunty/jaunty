@@ -87,25 +87,30 @@ func (s *Server) router(ctx context.Context) *chi.Mux {
 	r := chi.NewRouter()
 
 	r.Use(middleware.Recoverer)
-	r.Use(logger(ctxlog.FromContext(ctx)))
 	r.Use(requestID)
+	r.Use(logger(ctxlog.FromContext(ctx)))
 
 	r.Get("/", s.index)
-	r.Get("/join", s.join)
-	r.Post("/join", s.postJoin)
 
-	r.Get("/dashboard", s.dashboard)
-	r.Get("/dashboard/account/delete", s.accountDelete)
-	r.Post("/dashboard/account/delete", s.postAccountDelete)
-	r.Get("/dashboard/request/cancel", s.requestCancel)
-	r.Post("/dashboard/request/cancel", s.postRequestCancel)
+	r.Group(func(r chi.Router) {
+		r.Use(s.authenticator)
+
+		r.Get("/join", s.join)
+		r.Post("/join", s.postJoin)
+
+		r.Get("/dashboard", s.dashboard)
+		r.Get("/dashboard/account/delete", s.accountDelete)
+		r.Post("/dashboard/account/delete", s.postAccountDelete)
+		r.Get("/dashboard/request/cancel", s.requestCancel)
+		r.Post("/dashboard/request/cancel", s.postRequestCancel)
+
+		r.Get("/auth/destroy", s.destroyAuth)
+		r.Get("/logout", s.destroyAuth)
+	})
 
 	r.Get("/login", s.authDiscord)
 	r.Get("/auth", s.authDiscord)
 	r.Get("/auth/callback", s.authDiscordCallback)
-
-	r.Get("/auth/destroy", s.destroyAuth)
-	r.Get("/logout", s.destroyAuth)
 
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
 		templates.WritePageTemplate(w, &templates.ErrorPage{

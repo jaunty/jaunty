@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/jaunty/jaunty/internal/web/templates"
 	"github.com/rs/xid"
 	"github.com/zikaeroh/ctxlog"
 	"go.uber.org/zap"
@@ -56,4 +57,20 @@ func logger(l *zap.Logger) func(http.Handler) http.Handler {
 		}
 		return http.HandlerFunc(fn)
 	}
+}
+
+func (s *Server) authenticator(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		sess := s.getSession(r)
+
+		if sess.isNew() {
+			templates.WritePageTemplate(w, &templates.ErrorPage{
+				BasePage: s.basePage(r),
+				Message:  "The page you're trying to access requires that you're logged in!!",
+			})
+			return
+		}
+
+		next.ServeHTTP(w, r)
+	})
 }

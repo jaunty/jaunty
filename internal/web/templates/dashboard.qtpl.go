@@ -123,7 +123,7 @@ func (p *DashboardPage) StreamBody(qw422016 *qt422016.Writer) {
                 <div class="column is-narrow box">
                     <a class="delete is-pulled-right" href="/dashboard/request/cancel?req=`)
 //line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:62
-			qw422016.E().S(wr.ID)
+			qw422016.N().DL(wr.ID)
 //line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:62
 			qw422016.N().S(`"></a>
                     <ul class="is-size-5 mb-1">
