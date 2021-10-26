@@ -47,15 +47,15 @@
 
     <div class="mb-6">
         <h1 class="title">Whitelist Requests</h1>
-        <h2 class="subtitle">Every single whitelist request you've ever made, all right here.</h2>
+
+        {% if len(p.Requests) == 0 %}
+            <h2 class="subtitle">You don't have any???</h2>
+        {% else %}
+            <h2 class="subtitle">Every single whitelist request you've ever made, all right here.</h2>
+        {% endif %}
     </div>
 
-    {% if len(p.Requests) == 0 %}
-        <div>
-            <h1 class="title">Literally none.</h1>
-            <h2 class="subtitle">Ok.</h2>
-        </div>
-    {% else %}
+    {% if len(p.Requests) > 0 %}
         <div class="columns">
             {% for _, wr := range p.Requests %}
                 <div class="column is-narrow box">

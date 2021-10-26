@@ -97,21 +97,29 @@ func (p *DashboardPage) StreamBody(qw422016 *qt422016.Writer) {
 
     <div class="mb-6">
         <h1 class="title">Whitelist Requests</h1>
-        <h2 class="subtitle">Every single whitelist request you've ever made, all right here.</h2>
+
+        `)
+//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:51
+	if len(p.Requests) == 0 {
+//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:51
+		qw422016.N().S(`
+            <h2 class="subtitle">You don't have any???</h2>
+        `)
+//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:53
+	} else {
+//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:53
+		qw422016.N().S(`
+            <h2 class="subtitle">Every single whitelist request you've ever made, all right here.</h2>
+        `)
+//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:55
+	}
+//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:55
+	qw422016.N().S(`
     </div>
 
     `)
-//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:53
-	if len(p.Requests) == 0 {
-//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:53
-		qw422016.N().S(`
-        <div>
-            <h1 class="title">Literally none.</h1>
-            <h2 class="subtitle">Ok.</h2>
-        </div>
-    `)
 //line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:58
-	} else {
+	if len(p.Requests) > 0 {
 //line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:58
 		qw422016.N().S(`
         <div class="columns">
