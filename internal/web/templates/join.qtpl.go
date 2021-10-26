@@ -59,77 +59,55 @@ func (p *JoinPage) Title() string {
 func (p *JoinPage) StreamBody(qw422016 *qt422016.Writer) {
 //line /home/max/git/jaunty/redux/internal/web/templates/join.qtpl:9
 	qw422016.N().S(`
-    `)
-//line /home/max/git/jaunty/redux/internal/web/templates/join.qtpl:10
-	if p.BasePage.User != nil {
-//line /home/max/git/jaunty/redux/internal/web/templates/join.qtpl:10
-		qw422016.N().S(`
-        <div class="container">
-            <div class="columns is-centered">
-                <div class="column is-half">
-                    <h1 class="title">Check Yourself Before You Whitelist Yourself</h1>
-                    <hr>
-                </div>
+    <div class="container">
+        <div class="columns is-centered">
+            <div class="column is-half">
+                <h1 class="title">Check Yourself Before You Whitelist Yourself</h1>
+                <hr>
             </div>
+        </div>
 
-            <div class="columns is-centered">
-                <div class="column is-one-third">
-                    <form action="" method="POST">
-                        <div class="field has-addons has-addons-centered">
-                            <div class="control">
-                                <input id="username" name="username" class="input" type="text" placeholder="Minecraft Username">
-                            </div>
-                            <div class="control">
-                                <input for="username" type="submit" class="button is-jaunty" value="Submit">
-                            </div>
+        <div class="columns is-centered">
+            <div class="column is-one-third">
+                <form action="" method="POST">
+                    <div class="field has-addons has-addons-centered">
+                        <div class="control">
+                            <input id="username" name="username" class="input" type="text" placeholder="Minecraft Username">
                         </div>
-                    </form>
-                </div>
+                        <div class="control">
+                            <input for="username" type="submit" class="button is-jaunty" value="Submit">
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
-    `)
-//line /home/max/git/jaunty/redux/internal/web/templates/join.qtpl:34
-	} else {
-//line /home/max/git/jaunty/redux/internal/web/templates/join.qtpl:34
-		qw422016.N().S(`
-        <div class="modal is-active">
-            <div class="modal-background"></div>
-            <div class="modal-content box">
-                <h1 class="title">This page requires you to be logged in!</h1>
-                <h2 class="subtitle">Click <a href="/login">here</a> to do that.</h2>
-            </div>
-        </div>
-    `)
-//line /home/max/git/jaunty/redux/internal/web/templates/join.qtpl:42
-	}
-//line /home/max/git/jaunty/redux/internal/web/templates/join.qtpl:42
-	qw422016.N().S(`
+    </div>
 `)
-//line /home/max/git/jaunty/redux/internal/web/templates/join.qtpl:43
+//line /home/max/git/jaunty/redux/internal/web/templates/join.qtpl:33
 }
 
-//line /home/max/git/jaunty/redux/internal/web/templates/join.qtpl:43
+//line /home/max/git/jaunty/redux/internal/web/templates/join.qtpl:33
 func (p *JoinPage) WriteBody(qq422016 qtio422016.Writer) {
-//line /home/max/git/jaunty/redux/internal/web/templates/join.qtpl:43
+//line /home/max/git/jaunty/redux/internal/web/templates/join.qtpl:33
 	qw422016 := qt422016.AcquireWriter(qq422016)
-//line /home/max/git/jaunty/redux/internal/web/templates/join.qtpl:43
+//line /home/max/git/jaunty/redux/internal/web/templates/join.qtpl:33
 	p.StreamBody(qw422016)
-//line /home/max/git/jaunty/redux/internal/web/templates/join.qtpl:43
+//line /home/max/git/jaunty/redux/internal/web/templates/join.qtpl:33
 	qt422016.ReleaseWriter(qw422016)
-//line /home/max/git/jaunty/redux/internal/web/templates/join.qtpl:43
+//line /home/max/git/jaunty/redux/internal/web/templates/join.qtpl:33
 }
 
-//line /home/max/git/jaunty/redux/internal/web/templates/join.qtpl:43
+//line /home/max/git/jaunty/redux/internal/web/templates/join.qtpl:33
 func (p *JoinPage) Body() string {
-//line /home/max/git/jaunty/redux/internal/web/templates/join.qtpl:43
+//line /home/max/git/jaunty/redux/internal/web/templates/join.qtpl:33
 	qb422016 := qt422016.AcquireByteBuffer()
-//line /home/max/git/jaunty/redux/internal/web/templates/join.qtpl:43
+//line /home/max/git/jaunty/redux/internal/web/templates/join.qtpl:33
 	p.WriteBody(qb422016)
-//line /home/max/git/jaunty/redux/internal/web/templates/join.qtpl:43
+//line /home/max/git/jaunty/redux/internal/web/templates/join.qtpl:33
 	qs422016 := string(qb422016.B)
-//line /home/max/git/jaunty/redux/internal/web/templates/join.qtpl:43
+//line /home/max/git/jaunty/redux/internal/web/templates/join.qtpl:33
 	qt422016.ReleaseByteBuffer(qb422016)
-//line /home/max/git/jaunty/redux/internal/web/templates/join.qtpl:43
+//line /home/max/git/jaunty/redux/internal/web/templates/join.qtpl:33
 	return qs422016
-//line /home/max/git/jaunty/redux/internal/web/templates/join.qtpl:43
+//line /home/max/git/jaunty/redux/internal/web/templates/join.qtpl:33
 }
