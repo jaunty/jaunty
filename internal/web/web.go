@@ -33,8 +33,9 @@ func init() {
 
 // Options configures a Server.
 type Options struct {
-	Addr       string
-	SessionKey []byte
+	Addr        string
+	SessionKey  []byte
+	MaxRequests int
 
 	DB      *sql.DB
 	Redis   *redisx.Redis
@@ -44,7 +45,8 @@ type Options struct {
 
 // Server is responsible for serving the website and auth server.
 type Server struct {
-	addr string
+	addr        string
+	maxRequests int
 
 	store sessions.Store
 
@@ -57,12 +59,13 @@ type Server struct {
 // New creates a new Server.
 func New(opts *Options) (*Server, error) {
 	s := &Server{
-		addr:    opts.Addr,
-		db:      opts.DB,
-		discord: opts.Discord,
-		mojang:  opts.Mojang,
-		redis:   opts.Redis,
-		store:   sessions.NewCookieStore(opts.SessionKey),
+		addr:        opts.Addr,
+		maxRequests: opts.MaxRequests,
+		db:          opts.DB,
+		discord:     opts.Discord,
+		mojang:      opts.Mojang,
+		redis:       opts.Redis,
+		store:       sessions.NewCookieStore(opts.SessionKey),
 	}
 
 	return s, nil

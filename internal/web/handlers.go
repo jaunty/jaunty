@@ -75,6 +75,18 @@ func (s *Server) postJoin(w http.ResponseWriter, r *http.Request) {
 
 	sess := s.getSession(r)
 
+	count, err := models.Whitelists(qm.Where("sf = ?", sess.getSnowflake())).Count(ctx, s.db)
+	if err != nil {
+		ctxlog.Error(ctx, "error counting requests in database", zap.Error(err))
+		s.serveError(w, r, "Error counting your requests in the database")
+		return
+	}
+
+	if count >= int64(s.maxRequests) {
+		s.serveError(w, r, "You have reached the maximum number of requests allowed.")
+		return
+	}
+
 	wh := models.Whitelist{
 		SF:   sess.getSnowflake(),
 		UUID: uid,
@@ -176,9 +188,7 @@ func (s *Server) requestCancel(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func (s *Server) postRequestCancel(w http.ResponseWriter, r *http.Request) {
-
-}
+func (s *Server) postRequestCancel(w http.ResponseWriter, r *http.Request) {}
 
 func (s *Server) authDiscord(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
