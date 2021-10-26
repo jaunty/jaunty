@@ -89,7 +89,7 @@ func (p *DashboardPage) StreamBody(qw422016 *qt422016.Writer) {
 
     <div class="field is-grouped mb-5">
         <p class="control">
-            <a href="/account/delete" class="button is-jaunty">
+            <a href="/dashboard/account/delete" class="button is-jaunty">
                 Account Deletion
             </a>
         </p>

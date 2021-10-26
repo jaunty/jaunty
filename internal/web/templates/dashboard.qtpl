@@ -39,7 +39,7 @@
 
     <div class="field is-grouped mb-5">
         <p class="control">
-            <a href="/account/delete" class="button is-jaunty">
+            <a href="/dashboard/account/delete" class="button is-jaunty">
                 Account Deletion
             </a>
         </p>

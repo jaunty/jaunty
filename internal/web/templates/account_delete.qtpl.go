@@ -73,15 +73,6 @@ func (p *AccountDeletePage) StreamBody(qw422016 *qt422016.Writer) {
                 <div class="control">
                     <label class="checkbox">
                     <input type="checkbox" required>
-                    I understand that I will be removed from the Jaunty Discord upon account deletion
-                    </label>
-                </div>
-            </div>
-
-            <div class="field">
-                <div class="control">
-                    <label class="checkbox">
-                    <input type="checkbox" required>
                     I understand that this is irreversible
                     </label>
                 </div>
@@ -101,6 +92,15 @@ func (p *AccountDeletePage) StreamBody(qw422016 *qt422016.Writer) {
                     <label class="checkbox">
                     <input type="checkbox" required>
                     I TRIPLE OMEGA SUPER UBER UNDERSTAND that this is irreversible
+                    </label>
+                </div>
+            </div>
+
+            <div class="field">
+                <div class="control">
+                    <label class="checkbox">
+                    <input type="checkbox" required>
+                    I understand that I will be removed from the Jaunty Discord upon account deletion
                     </label>
                 </div>
             </div>
