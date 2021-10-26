@@ -3,7 +3,8 @@ BEGIN;
 CREATE TYPE whitelist_status AS ENUM (
     'pending',
     'approved',
-    'rejected'
+    'rejected',
+    'cancelled'
 );
 
 CREATE TABLE users (

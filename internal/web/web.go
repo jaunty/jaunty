@@ -95,8 +95,10 @@ func (s *Server) router(ctx context.Context) *chi.Mux {
 	r.Post("/join", s.postJoin)
 
 	r.Get("/dashboard", s.dashboard)
-	r.Get("/account/delete", s.accountDelete)
-	r.Post("/account/delete", s.postAccountDelete)
+	r.Get("/dashboard/account/delete", s.accountDelete)
+	r.Post("/dashboard/account/delete", s.postAccountDelete)
+	r.Get("/dashboard/request/cancel", s.requestCancel)
+	r.Post("/dashboard/request/cancel", s.postRequestCancel)
 
 	r.Get("/login", s.authDiscord)
 	r.Get("/auth", s.authDiscord)

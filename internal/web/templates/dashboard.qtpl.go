@@ -121,90 +121,96 @@ func (p *DashboardPage) StreamBody(qw422016 *qt422016.Writer) {
 //line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:60
 			qw422016.N().S(`
                 <div class="column is-narrow box">
-                    <ul class="is-size-5">
+                    <a class="delete is-pulled-right" href="/dashboard/request/cancel?req=`)
+//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:62
+			qw422016.E().S(wr.ID)
+//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:62
+			qw422016.N().S(`"></a>
+                    <ul class="is-size-5 mb-1">
                         <li>`)
-//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:63
+//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:64
 			qw422016.E().S(p.ResolvedUUIDs[wr.UUID])
-//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:63
+//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:64
 			qw422016.N().S(`</li>
                         <li>`)
-//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:64
+//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:65
 			qw422016.E().S(wr.CreatedAt.In(loc).Format("01/02/2006 03:04pm"))
-//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:64
-			qw422016.N().S(`</li>
+//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:65
+			qw422016.N().S(` </li>
                         <li>
                             <span class="tag is-uppercase
 `)
-//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:67
+//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:68
 			switch wr.WhitelistStatus {
-//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:68
+//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:69
 			case "pending":
-//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:68
+//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:69
 				qw422016.N().S(`
                                     is-warning
                                 `)
-//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:70
+//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:71
 			case "approved":
-//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:70
+//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:71
 				qw422016.N().S(`
                                     is-success
                                 `)
-//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:72
+//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:73
 			case "rejected":
-//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:72
+//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:73
 				qw422016.N().S(`
                                     is-danger
 `)
-//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:74
+//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:75
 			}
-//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:74
+//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:75
 			qw422016.N().S(`                                ">
                                 `)
-//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:76
+//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:77
 			qw422016.E().S(wr.WhitelistStatus)
-//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:76
+//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:77
 			qw422016.N().S(`
                             </span>
                         </li>
                     </ul>
+                </div>
             `)
-//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:80
+//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:82
 		}
-//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:80
+//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:82
 		qw422016.N().S(`
         </div>
     `)
-//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:82
+//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:84
 	}
-//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:82
+//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:84
 	qw422016.N().S(`
 </div>
 `)
-//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:84
+//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:86
 }
 
-//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:84
+//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:86
 func (p *DashboardPage) WriteBody(qq422016 qtio422016.Writer) {
-//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:84
+//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:86
 	qw422016 := qt422016.AcquireWriter(qq422016)
-//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:84
+//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:86
 	p.StreamBody(qw422016)
-//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:84
+//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:86
 	qt422016.ReleaseWriter(qw422016)
-//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:84
+//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:86
 }
 
-//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:84
+//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:86
 func (p *DashboardPage) Body() string {
-//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:84
+//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:86
 	qb422016 := qt422016.AcquireByteBuffer()
-//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:84
+//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:86
 	p.WriteBody(qb422016)
-//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:84
+//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:86
 	qs422016 := string(qb422016.B)
-//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:84
+//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:86
 	qt422016.ReleaseByteBuffer(qb422016)
-//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:84
+//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:86
 	return qs422016
-//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:84
+//line /home/max/git/jaunty/redux/internal/web/templates/dashboard.qtpl:86
 }

@@ -147,6 +147,39 @@ func (s *Server) postAccountDelete(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+func (s *Server) requestCancel(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	id := r.URL.Query().Get("req")
+	if id == "" {
+		s.serveError(w, r, "Whitelist request ID is blank")
+		return
+	}
+
+	sess := s.getSession(r)
+
+	req, err := models.Whitelists(qm.Where("id = ? AND sf = ?", id, sess.getSnowflake())).One(ctx, s.db)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			s.serveError(w, r, "Request does not exist in database, or it's not yours to delete.")
+			return
+		}
+
+		ctxlog.Error(ctx, "error querying db for whitelist", zap.Error(err))
+		s.serveError(w, r, "Unable to get whitelist request from database")
+		return
+	}
+
+	templates.WritePageTemplate(w, &templates.CancelRequestPage{
+		BasePage: s.basePage(r),
+		Request:  req,
+	})
+}
+
+func (s *Server) postRequestCancel(w http.ResponseWriter, r *http.Request) {
+
+}
+
 func (s *Server) authDiscord(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 

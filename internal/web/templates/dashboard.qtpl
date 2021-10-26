@@ -59,9 +59,10 @@
         <div class="columns">
             {% for _, wr := range p.Requests %}
                 <div class="column is-narrow box">
-                    <ul class="is-size-5">
+                    <a class="delete is-pulled-right" href="/dashboard/request/cancel?req={%s wr.ID %}"></a>
+                    <ul class="is-size-5 mb-1">
                         <li>{%s p.ResolvedUUIDs[wr.UUID] %}</li>
-                        <li>{%s wr.CreatedAt.In(loc).Format("01/02/2006 03:04pm") %}</li>
+                        <li>{%s wr.CreatedAt.In(loc).Format("01/02/2006 03:04pm") %} </li>
                         <li>
                             <span class="tag is-uppercase
                                 {%- switch wr.WhitelistStatus -%}
@@ -77,6 +78,7 @@
                             </span>
                         </li>
                     </ul>
+                </div>
             {% endfor %}
         </div>
     {% endif %}
