@@ -93,6 +93,7 @@ func (s *Server) router(ctx context.Context) *chi.Mux {
 	r.Use(middleware.Recoverer)
 	r.Use(requestID)
 	r.Use(logger(ctxlog.FromContext(ctx)))
+	r.Use(s.transaction)
 
 	r.Get("/", s.index)
 

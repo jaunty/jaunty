@@ -78,10 +78,11 @@ func (w *Web) Run(ctx context.Context, debug bool) error {
 	}
 
 	opts := &web.Options{
-		Addr:       w.Addr,
-		SessionKey: []byte(w.SessionKey),
-		DB:         db,
-		Redis:      rdb,
+		Addr:        w.Addr,
+		SessionKey:  []byte(w.SessionKey),
+		DB:          db,
+		Redis:       rdb,
+		MaxRequests: w.MaxRequests,
 
 		Discord: dsc,
 		Mojang:  moj,

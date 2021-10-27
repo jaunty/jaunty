@@ -2,6 +2,8 @@ package web
 
 import (
 	"context"
+	"database/sql"
+	"errors"
 	"net/http"
 
 	"github.com/jaunty/jaunty/internal/web/templates"
@@ -14,6 +16,8 @@ import (
 // https://github.com/hortbot/hortbot/blob/master/internal/web/mid/mid.go
 
 type requestIDKey struct{}
+
+type txKey struct{}
 
 const requestIDHeader = "X-Request-ID"
 
@@ -71,6 +75,32 @@ func (s *Server) authenticator(next http.Handler) http.Handler {
 			return
 		}
 
+		next.ServeHTTP(w, r)
+	})
+}
+
+func (s *Server) transaction(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := r.Context()
+
+		tx, err := s.db.BeginTx(ctx, nil)
+		if err != nil {
+			s.serveError(w, r, "Unable to start database transaction")
+			return
+		}
+
+		defer func() {
+			if err := tx.Rollback(); err != nil {
+				if !errors.Is(err, sql.ErrTxDone) {
+					ctxlog.Error(ctx, "error rolling back transaction", zap.Error(err))
+					s.serveError(w, r, "Unable to rollback transaction")
+					return
+				}
+			}
+		}()
+
+		ctx = context.WithValue(ctx, txKey{}, tx)
+		r = r.WithContext(ctx)
 		next.ServeHTTP(w, r)
 	})
 }

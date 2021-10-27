@@ -62,7 +62,9 @@ func (s *Server) postJoin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	exists, err := models.Whitelists(qm.Where("uuid = ?", uid)).Exists(ctx, s.db)
+	tx := txFromCtx(ctx)
+
+	exists, err := models.Whitelists(qm.Where("uuid = ?", uid)).Exists(ctx, tx)
 	if err != nil {
 		ctxlog.Error(ctx, "error getting whitelist from database", zap.Error(err))
 		s.serveError(w, r, "Error checking request's existence in the database")
@@ -76,7 +78,7 @@ func (s *Server) postJoin(w http.ResponseWriter, r *http.Request) {
 
 	sess := s.getSession(r)
 
-	count, err := models.Whitelists(qm.Where("sf = ?", sess.getSnowflake())).Count(ctx, s.db)
+	count, err := models.Whitelists(qm.Where("sf = ?", sess.getSnowflake())).Count(ctx, tx)
 	if err != nil {
 		ctxlog.Error(ctx, "error counting requests in database", zap.Error(err))
 		s.serveError(w, r, "Error counting your requests in the database")
@@ -93,9 +95,15 @@ func (s *Server) postJoin(w http.ResponseWriter, r *http.Request) {
 		UUID: uid,
 	}
 
-	if err := wh.Insert(ctx, s.db, boil.Infer()); err != nil {
+	if err := wh.Insert(ctx, tx, boil.Infer()); err != nil {
 		ctxlog.Error(ctx, "error creating whitelist request", zap.Error(err))
 		s.serveError(w, r, "Error inserting whitelist request into the database")
+		return
+	}
+
+	if err := tx.Commit(); err != nil {
+		ctxlog.Error(ctx, "error committing transaction", zap.Error(err))
+		s.serveError(w, r, "Error committing transaction")
 		return
 	}
 
@@ -108,8 +116,9 @@ func (s *Server) postJoin(w http.ResponseWriter, r *http.Request) {
 func (s *Server) dashboard(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	sess := s.getSession(r)
+	tx := txFromCtx(ctx)
 
-	wr, err := models.Whitelists(qm.Where("sf = ?", sess.getSnowflake())).All(ctx, s.db)
+	wr, err := models.Whitelists(qm.Where("sf = ?", sess.getSnowflake())).All(ctx, tx)
 	if err != nil {
 		ctxlog.Error(ctx, "error getting whitelist requests", zap.Error(err), zap.String("sf", sess.getSnowflake()))
 		s.serveError(w, r, "Unable to fetch whitelist requests")
@@ -126,6 +135,12 @@ func (s *Server) dashboard(w http.ResponseWriter, r *http.Request) {
 		}
 
 		names[wr.UUID] = name
+	}
+
+	if err := tx.Commit(); err != nil {
+		ctxlog.Error(ctx, "error committing transaction", zap.Error(err))
+		s.serveError(w, r, "Error committing transaction")
+		return
 	}
 
 	templates.WritePageTemplate(w, &templates.DashboardPage{
@@ -145,8 +160,9 @@ func (s *Server) postAccountDelete(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	sess := s.getSession(r)
 	sf := sess.getSnowflake()
+	tx := txFromCtx(ctx)
 
-	user, err := models.Users(qm.Where("sf = ?", sf)).One(ctx, s.db)
+	user, err := models.Users(qm.Where("sf = ?", sf)).One(ctx, tx)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			s.serveError(w, r, "User doesn't exist")
@@ -158,7 +174,7 @@ func (s *Server) postAccountDelete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := user.Delete(ctx, s.db); err != nil {
+	if err := user.Delete(ctx, tx); err != nil {
 		ctxlog.Error(ctx, "error removing user from database", zap.Error(err))
 		s.serveError(w, r, "Unable to delete user from database")
 		return
@@ -167,6 +183,12 @@ func (s *Server) postAccountDelete(w http.ResponseWriter, r *http.Request) {
 	if err := s.discord.DeleteGuildMemberWithReason(ctx, s.guildID, sf, "User has deleted their Jaunty account"); err != nil {
 		ctxlog.Error(ctx, "error kicking user from the discord", zap.Error(err))
 		s.serveError(w, r, "Unable to kick user from Discord; account deleted otherwise.")
+		return
+	}
+
+	if err := tx.Commit(); err != nil {
+		ctxlog.Error(ctx, "error committing transaction", zap.Error(err))
+		s.serveError(w, r, "Error committing transaction")
 		return
 	}
 
@@ -213,8 +235,10 @@ func (s *Server) postRequestCancel(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	tx := txFromCtx(ctx)
+
 	sess := s.getSession(r)
-	req, err := models.Whitelists(qm.Where("id = ? AND sf = ?", i, sess.getSnowflake())).One(ctx, s.db)
+	req, err := models.Whitelists(qm.Where("id = ? AND sf = ?", i, sess.getSnowflake())).One(ctx, tx)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			s.serveError(w, r, "Request does not exist, or it's not yours to delete")
@@ -226,9 +250,15 @@ func (s *Server) postRequestCancel(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := req.Delete(ctx, s.db); err != nil {
+	if err := req.Delete(ctx, tx); err != nil {
 		ctxlog.Error(ctx, "error deleting whitelist request", zap.Error(err))
 		s.serveError(w, r, "Unable to remove request from the database")
+		return
+	}
+
+	if err := tx.Commit(); err != nil {
+		ctxlog.Error(ctx, "error committing transaction", zap.Error(err))
+		s.serveError(w, r, "Error committing transaction")
 		return
 	}
 
@@ -296,12 +326,7 @@ func (s *Server) authDiscordCallback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tx, err := s.db.BeginTx(ctx, nil)
-	if err != nil {
-		ctxlog.Error(ctx, "error beginning transaction", zap.Error(err))
-		s.serveError(w, r, "Error starting database transaction")
-		return
-	}
+	tx := txFromCtx(ctx)
 
 	defer func() {
 		if err := tx.Rollback(); err != nil {
@@ -320,7 +345,7 @@ func (s *Server) authDiscordCallback(w http.ResponseWriter, r *http.Request) {
 
 	if err := tx.Commit(); err != nil {
 		ctxlog.Error(ctx, "error committing transaction", zap.Error(err))
-		s.serveError(w, r, "Error committing database transaction")
+		s.serveError(w, r, "Error committing transaction")
 		return
 	}
 

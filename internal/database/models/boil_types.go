@@ -53,7 +53,8 @@ func makeCacheKey(cols boil.Columns, nzDefaults []string) string {
 
 // Enum values for whitelist_status
 const (
-	WhitelistStatusPending  = "pending"
-	WhitelistStatusApproved = "approved"
-	WhitelistStatusRejected = "rejected"
+	WhitelistStatusPending   = "pending"
+	WhitelistStatusApproved  = "approved"
+	WhitelistStatusRejected  = "rejected"
+	WhitelistStatusCancelled = "cancelled"
 )
