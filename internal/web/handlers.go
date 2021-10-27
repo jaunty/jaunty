@@ -3,7 +3,6 @@ package web
 import (
 	"database/sql"
 	"errors"
-	"fmt"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -328,17 +327,18 @@ func (s *Server) authDiscordCallback(w http.ResponseWriter, r *http.Request) {
 
 	tx := txFromCtx(ctx)
 
-	defer func() {
-		if err := tx.Rollback(); err != nil {
-			if !errors.Is(err, sql.ErrTxDone) {
-				ctxlog.Error(ctx, "error rolling back transaction", zap.Error(err))
-			}
-		}
-	}()
+	u := &models.User{
+		SF: user.ID,
+	}
+
+	if err := u.Insert(ctx, tx, boil.Infer()); err != nil {
+		ctxlog.Error(ctx, "error creating new user", zap.Error(err))
+		s.serveError(w, r, "Error creating new user account")
+		return
+	}
 
 	if err := modelsx.UpsertToken(ctx, tx, user.ID, token); err != nil {
 		ctxlog.Error(ctx, "error upserting token", zap.Error(err))
-		fmt.Println(err)
 		s.serveError(w, r, "Error upserting OAuth2 token in the database")
 		return
 	}

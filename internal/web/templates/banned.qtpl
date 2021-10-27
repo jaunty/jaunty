@@ -1,0 +1,18 @@
+{% code type
+    BannedPage struct {
+        *BasePage
+    }
+%}
+
+{% func (p *BannedPage) Title() %}BANNED{% endfunc %}
+
+{% func (p *BannedPage) Body() %}
+<section class="hero is-large">
+    <div class="hero-body">
+        <div class="container">
+            <h1 class="title">You are banned from Jaunty.</h1>
+            <h2 class="subtitle">If you believe this in error, contact holedaemon.</h2>
+        </div>
+    </div>
+</section>
+{% endfunc %}
