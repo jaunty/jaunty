@@ -47,6 +47,7 @@ type Options struct {
 type Server struct {
 	addr        string
 	maxRequests int
+	guildID     string
 
 	store sessions.Store
 

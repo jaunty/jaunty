@@ -24,6 +24,8 @@ type Web struct {
 	DSN        string `help:"PostgreSQL DSN." required:"" env:"JAUNTY_DB_DSN"`
 	Redis      string `help:"Address to Redis server." required:"" env:"JAUNTY_REDIS_ADDR"`
 
+	GuildID string `help:"Guild ID for the associated Discord" required:"" env:"JAUNTY_GUILD_ID"`
+
 	MaxRequests int `help:"Maximum whitelist requests per user." default:"2" env:"JAUNTY_MAX_REQUESTS"`
 
 	BotToken string `help:"Discord bot OAuth2 token for API access" required:"" env:"JAUNTY_BOT_TOKEN"`

@@ -146,9 +146,27 @@ func (s *Server) postAccountDelete(w http.ResponseWriter, r *http.Request) {
 	sess := s.getSession(r)
 	sf := sess.getSnowflake()
 
-	if err := models.Users(qm.Where("sf = ?", sf)).DeleteAll(ctx, s.db); err != nil {
-		ctxlog.Error(ctx, "error deleting user from database", zap.Error(err))
-		s.serveError(w, r, "Error deleting user from database???")
+	user, err := models.Users(qm.Where("sf = ?", sf)).One(ctx, s.db)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			s.serveError(w, r, "User doesn't exist")
+			return
+		}
+
+		ctxlog.Error(ctx, "error querying user from database", zap.Error(err))
+		s.serveError(w, r, "Unable to query user from database")
+		return
+	}
+
+	if err := user.Delete(ctx, s.db); err != nil {
+		ctxlog.Error(ctx, "error removing user from database", zap.Error(err))
+		s.serveError(w, r, "Unable to delete user from database")
+		return
+	}
+
+	if err := s.discord.DeleteGuildMemberWithReason(ctx, s.guildID, sf, "User has deleted their Jaunty account"); err != nil {
+		ctxlog.Error(ctx, "error kicking user from the discord", zap.Error(err))
+		s.serveError(w, r, "Unable to kick user from Discord; account deleted otherwise.")
 		return
 	}
 
