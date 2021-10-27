@@ -327,14 +327,24 @@ func (s *Server) authDiscordCallback(w http.ResponseWriter, r *http.Request) {
 
 	tx := txFromCtx(ctx)
 
-	u := &models.User{
-		SF: user.ID,
+	exists, err := models.Users(qm.Where("sf = ?", user.ID)).Exists(ctx, tx)
+	if err != nil {
+		ctxlog.Error(ctx, "error querying user from database", zap.Error(err))
+		s.serveError(w, r, "Unable to query user from database")
+		return
+
 	}
 
-	if err := u.Insert(ctx, tx, boil.Infer()); err != nil {
-		ctxlog.Error(ctx, "error creating new user", zap.Error(err))
-		s.serveError(w, r, "Error creating new user account")
-		return
+	if !exists {
+		u := &models.User{
+			SF: user.ID,
+		}
+
+		if err := u.Insert(ctx, tx, boil.Infer()); err != nil {
+			ctxlog.Error(ctx, "error creating new user", zap.Error(err))
+			s.serveError(w, r, "Error creating new user account")
+			return
+		}
 	}
 
 	if err := modelsx.UpsertToken(ctx, tx, user.ID, token); err != nil {
