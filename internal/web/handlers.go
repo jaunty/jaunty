@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"strconv"
 	"time"
 
 	"github.com/go-redis/redis/v8"
@@ -160,35 +161,66 @@ func (s *Server) postAccountDelete(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) requestCancel(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-
-	id := r.URL.Query().Get("req")
+	id := r.URL.Query().Get("id")
 	if id == "" {
-		s.serveError(w, r, "Whitelist request ID is blank")
+		s.serveError(w, r, "Request ID is blank, doofus")
 		return
 	}
 
-	sess := s.getSession(r)
-
-	req, err := models.Whitelists(qm.Where("id = ? AND sf = ?", id, sess.getSnowflake())).One(ctx, s.db)
+	i, err := strconv.ParseInt(id, 10, 64)
 	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			s.serveError(w, r, "Request does not exist in database, or it's not yours to delete.")
-			return
-		}
-
-		ctxlog.Error(ctx, "error querying db for whitelist", zap.Error(err))
-		s.serveError(w, r, "Unable to get whitelist request from database")
+		s.serveError(w, r, "Unable to parse request ID into int64")
 		return
 	}
 
 	templates.WritePageTemplate(w, &templates.CancelRequestPage{
-		BasePage: s.basePage(r),
-		Request:  req,
+		BasePage:  s.basePage(r),
+		RequestID: i,
 	})
 }
 
-func (s *Server) postRequestCancel(w http.ResponseWriter, r *http.Request) {}
+func (s *Server) postRequestCancel(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	if err := r.ParseForm(); err != nil {
+		ctxlog.Error(ctx, "error parsing form", zap.Error(err))
+		s.serveError(w, r, "Unable to parse HTML form")
+		return
+	}
+
+	id := r.FormValue("id")
+	i, err := strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		s.serveError(w, r, "Unable to parse request ID into int64")
+		return
+	}
+
+	sess := s.getSession(r)
+	req, err := models.Whitelists(qm.Where("id = ? AND sf = ?", i, sess.getSnowflake())).One(ctx, s.db)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			s.serveError(w, r, "Request does not exist, or it's not yours to delete")
+			return
+		}
+
+		ctxlog.Error(ctx, "error getting whitelist request from database", zap.Error(err))
+		s.serveError(w, r, "Unable to query your request from the database")
+		return
+	}
+
+	if err := req.Delete(ctx, s.db); err != nil {
+		ctxlog.Error(ctx, "error deleting whitelist request", zap.Error(err))
+		s.serveError(w, r, "Unable to remove request from the database")
+		return
+	}
+
+	templates.WritePageTemplate(w, &templates.SuccessPage{
+		BasePage:  s.basePage(r),
+		PageTitle: "Request Deleted",
+		Header:    "Your request has been deleted",
+		SubHeader: "Later, idiot!!",
+	})
+}
 
 func (s *Server) authDiscord(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()

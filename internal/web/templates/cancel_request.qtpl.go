@@ -6,72 +6,74 @@ package templates
 
 //line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:1
 import (
-	"github.com/jaunty/jaunty/internal/database/models"
-)
-
-//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:6
-import (
 	qtio422016 "io"
 
 	qt422016 "github.com/valyala/quicktemplate"
 )
 
-//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:6
+//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:1
 var (
 	_ = qtio422016.Copy
 	_ = qt422016.AcquireByteBuffer
 )
 
-//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:7
+//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:2
 type CancelRequestPage struct {
 	*BasePage
-	Request *models.Whitelist
+	RequestID int64
 }
 
-//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:13
+//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:8
 func (p *CancelRequestPage) StreamTitle(qw422016 *qt422016.Writer) {
-//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:13
+//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:8
 	qw422016.N().S(`Cancel Request`)
-//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:13
+//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:8
 }
 
-//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:13
+//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:8
 func (p *CancelRequestPage) WriteTitle(qq422016 qtio422016.Writer) {
-//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:13
+//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:8
 	qw422016 := qt422016.AcquireWriter(qq422016)
-//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:13
+//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:8
 	p.StreamTitle(qw422016)
-//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:13
+//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:8
 	qt422016.ReleaseWriter(qw422016)
-//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:13
+//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:8
 }
 
-//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:13
+//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:8
 func (p *CancelRequestPage) Title() string {
-//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:13
+//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:8
 	qb422016 := qt422016.AcquireByteBuffer()
-//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:13
+//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:8
 	p.WriteTitle(qb422016)
-//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:13
+//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:8
 	qs422016 := string(qb422016.B)
-//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:13
+//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:8
 	qt422016.ReleaseByteBuffer(qb422016)
-//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:13
+//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:8
 	return qs422016
-//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:13
+//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:8
 }
 
-//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:15
+//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:10
 func (p *CancelRequestPage) StreamBody(qw422016 *qt422016.Writer) {
-//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:15
+//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:10
 	qw422016.N().S(`
 <div class="columns is-centered">
     <div class="column is-narrow">
         <h1 class="title">Just making sure you want to do that, Star Fox</h1>
-        <hr>
+        <hr class="mb-1>
     </div>
-    <div class="column is-narrow">
+</div>
+<div class="columns is-centered">
+    <div class="column is-narrow has-text-centered">
         <form method="POST">
+            <input type="hidden" name="id" value="`)
+//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:20
+	qw422016.N().DL(p.RequestID)
+//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:20
+	qw422016.N().S(`">
             <div class="field">
                 <div class="control">
                     <label class="checkbox">
@@ -90,31 +92,31 @@ func (p *CancelRequestPage) StreamBody(qw422016 *qt422016.Writer) {
     </div>
 </div>
 `)
-//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:40
+//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:38
 }
 
-//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:40
+//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:38
 func (p *CancelRequestPage) WriteBody(qq422016 qtio422016.Writer) {
-//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:40
+//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:38
 	qw422016 := qt422016.AcquireWriter(qq422016)
-//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:40
+//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:38
 	p.StreamBody(qw422016)
-//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:40
+//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:38
 	qt422016.ReleaseWriter(qw422016)
-//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:40
+//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:38
 }
 
-//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:40
+//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:38
 func (p *CancelRequestPage) Body() string {
-//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:40
+//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:38
 	qb422016 := qt422016.AcquireByteBuffer()
-//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:40
+//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:38
 	p.WriteBody(qb422016)
-//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:40
+//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:38
 	qs422016 := string(qb422016.B)
-//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:40
+//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:38
 	qt422016.ReleaseByteBuffer(qb422016)
-//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:40
+//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:38
 	return qs422016
-//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:40
+//line /home/max/git/jaunty/redux/internal/web/templates/cancel_request.qtpl:38
 }

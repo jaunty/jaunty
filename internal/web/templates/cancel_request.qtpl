@@ -1,12 +1,7 @@
-{% import (
-    "github.com/jaunty/jaunty/internal/database/models"
-)
-%}
-
 {% code 
     type CancelRequestPage struct {
         *BasePage
-        Request *models.Whitelist
+        RequestID int64
     }
 %}
 
@@ -16,10 +11,13 @@
 <div class="columns is-centered">
     <div class="column is-narrow">
         <h1 class="title">Just making sure you want to do that, Star Fox</h1>
-        <hr>
+        <hr class="mb-1>
     </div>
-    <div class="column is-narrow">
+</div>
+<div class="columns is-centered">
+    <div class="column is-narrow has-text-centered">
         <form method="POST">
+            <input type="hidden" name="id" value="{%dl p.RequestID %}">
             <div class="field">
                 <div class="control">
                     <label class="checkbox">
