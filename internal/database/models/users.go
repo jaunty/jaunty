@@ -25,6 +25,7 @@ import (
 type User struct {
 	ID        int64     `boil:"id" json:"id" toml:"id" yaml:"id"`
 	SF        string    `boil:"sf" json:"sf" toml:"sf" yaml:"sf"`
+	Banned    bool      `boil:"banned" json:"banned" toml:"banned" yaml:"banned"`
 	CreatedAt time.Time `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
 	UpdatedAt time.Time `boil:"updated_at" json:"updated_at" toml:"updated_at" yaml:"updated_at"`
 
@@ -35,11 +36,13 @@ type User struct {
 var UserColumns = struct {
 	ID        string
 	SF        string
+	Banned    string
 	CreatedAt string
 	UpdatedAt string
 }{
 	ID:        "id",
 	SF:        "sf",
+	Banned:    "banned",
 	CreatedAt: "created_at",
 	UpdatedAt: "updated_at",
 }
@@ -47,25 +50,38 @@ var UserColumns = struct {
 var UserTableColumns = struct {
 	ID        string
 	SF        string
+	Banned    string
 	CreatedAt string
 	UpdatedAt string
 }{
 	ID:        "users.id",
 	SF:        "users.sf",
+	Banned:    "users.banned",
 	CreatedAt: "users.created_at",
 	UpdatedAt: "users.updated_at",
 }
 
 // Generated where
 
+type whereHelperbool struct{ field string }
+
+func (w whereHelperbool) EQ(x bool) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.EQ, x) }
+func (w whereHelperbool) NEQ(x bool) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.NEQ, x) }
+func (w whereHelperbool) LT(x bool) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.LT, x) }
+func (w whereHelperbool) LTE(x bool) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.LTE, x) }
+func (w whereHelperbool) GT(x bool) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.GT, x) }
+func (w whereHelperbool) GTE(x bool) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.GTE, x) }
+
 var UserWhere = struct {
 	ID        whereHelperint64
 	SF        whereHelperstring
+	Banned    whereHelperbool
 	CreatedAt whereHelpertime_Time
 	UpdatedAt whereHelpertime_Time
 }{
 	ID:        whereHelperint64{field: "\"users\".\"id\""},
 	SF:        whereHelperstring{field: "\"users\".\"sf\""},
+	Banned:    whereHelperbool{field: "\"users\".\"banned\""},
 	CreatedAt: whereHelpertime_Time{field: "\"users\".\"created_at\""},
 	UpdatedAt: whereHelpertime_Time{field: "\"users\".\"updated_at\""},
 }
@@ -87,9 +103,9 @@ func (*userR) NewStruct() *userR {
 type userL struct{}
 
 var (
-	userAllColumns            = []string{"id", "sf", "created_at", "updated_at"}
+	userAllColumns            = []string{"id", "sf", "banned", "created_at", "updated_at"}
 	userColumnsWithoutDefault = []string{"sf"}
-	userColumnsWithDefault    = []string{"id", "created_at", "updated_at"}
+	userColumnsWithDefault    = []string{"id", "banned", "created_at", "updated_at"}
 	userPrimaryKeyColumns     = []string{"id"}
 )
 

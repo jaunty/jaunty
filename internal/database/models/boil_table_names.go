@@ -4,12 +4,10 @@
 package models
 
 var TableNames = struct {
-	Bans          string
 	DiscordTokens string
 	Users         string
 	Whitelist     string
 }{
-	Bans:          "bans",
 	DiscordTokens: "discord_tokens",
 	Users:         "users",
 	Whitelist:     "whitelist",
