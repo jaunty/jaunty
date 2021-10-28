@@ -5,9 +5,9 @@ import (
 	"crypto/ed25519"
 	"database/sql"
 	"encoding/hex"
+	"encoding/json"
 	"errors"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -414,17 +414,13 @@ func (s *Server) hook(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var msg bytes.Buffer
-	var bod bytes.Buffer
+	bod := new(bytes.Buffer)
 
 	msg.WriteString(timestamp)
 
 	defer r.Body.Close()
 
-	defer func() {
-		r.Body = ioutil.NopCloser(&bod)
-	}()
-
-	_, err = io.Copy(&msg, io.TeeReader(r.Body, &bod))
+	_, err = io.Copy(&msg, io.TeeReader(r.Body, bod))
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
 		return
@@ -436,5 +432,12 @@ func (s *Server) hook(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var dat tumult.InteractionData
-	if err := json.Unmarshal(r.Body)
+	if err := json.NewDecoder(bod).Decode(&dat); err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	if dat.Type == tumult.InteractionTypePing {
+		return
+	}
 }
