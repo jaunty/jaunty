@@ -48,6 +48,7 @@ type Server struct {
 	addr        string
 	maxRequests int
 	guildID     string
+	publicKey   []byte
 
 	store sessions.Store
 

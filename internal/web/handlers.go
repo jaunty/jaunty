@@ -1,8 +1,13 @@
 package web
 
 import (
+	"bytes"
+	"crypto/ed25519"
 	"database/sql"
+	"encoding/hex"
 	"errors"
+	"io"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -10,6 +15,7 @@ import (
 
 	"github.com/go-redis/redis/v8"
 	"github.com/gofrs/uuid"
+	"github.com/holedaemon/tumult"
 	"github.com/jaunty/jaunty/internal/database/models"
 	"github.com/jaunty/jaunty/internal/database/modelsx"
 	"github.com/jaunty/jaunty/internal/pkg/api/mojang"
@@ -381,4 +387,54 @@ func (s *Server) destroyAuth(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
+func (s *Server) hook(w http.ResponseWriter, r *http.Request) {
+	signature := r.Header.Get("X-Signature-Ed25519")
+	if signature == "" {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	sig, err := hex.DecodeString(signature)
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	if len(sig) != ed25519.SignatureSize || sig[63]&224 != 0 {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	timestamp := r.Header.Get("X-Signature-Timestamp")
+	if timestamp == "" {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	var msg bytes.Buffer
+	var bod bytes.Buffer
+
+	msg.WriteString(timestamp)
+
+	defer r.Body.Close()
+
+	defer func() {
+		r.Body = ioutil.NopCloser(&bod)
+	}()
+
+	_, err = io.Copy(&msg, io.TeeReader(r.Body, &bod))
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	if !ed25519.Verify(s.publicKey, msg.Bytes(), sig) {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	var dat tumult.InteractionData
+	if err := json.Unmarshal(r.Body)
 }
