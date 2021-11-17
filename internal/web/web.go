@@ -8,14 +8,14 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
 	"github.com/gorilla/sessions"
+	"github.com/holedaemon/web"
+	"github.com/holedaemon/web/middleware"
 	"github.com/jaunty/jaunty/internal/pkg/api/discord"
 	"github.com/jaunty/jaunty/internal/pkg/api/mojang"
 	"github.com/jaunty/jaunty/internal/pkg/redisx"
 	"github.com/jaunty/jaunty/internal/web/templates"
 	"github.com/zikaeroh/ctxlog"
-	"go.uber.org/zap"
 )
 
 //go:embed static
@@ -90,10 +90,17 @@ func (s *Server) basePage(r *http.Request) *templates.BasePage {
 func (s *Server) router(ctx context.Context) *chi.Mux {
 	r := chi.NewRouter()
 
-	r.Use(middleware.Recoverer)
-	r.Use(requestID)
-	r.Use(logger(ctxlog.FromContext(ctx)))
-	r.Use(s.transaction)
+	r.Use(
+		middleware.Logger(ctxlog.FromContext(ctx)),
+		middleware.Recoverer(s.recoverFunc),
+		middleware.RequestID,
+		middleware.Transaction(s.db),
+	)
+
+	r.Use(
+		middleware.Logger(ctxlog.FromContext(ctx)),
+	)
+	r.Use(middleware.RequestID)
 
 	r.Get("/", s.index)
 
@@ -137,19 +144,9 @@ func (s *Server) serveError(w http.ResponseWriter, r *http.Request, msg string) 
 
 // Start runs a Server.
 func (s *Server) Start(ctx context.Context) error {
-	srv := &http.Server{
-		Handler: s.router(ctx),
+	return web.Start(ctx, &web.Options{
 		Addr:    s.addr,
-	}
-
-	go func() {
-		<-ctx.Done()
-
-		if err := srv.Shutdown(context.Background()); err != nil {
-			ctxlog.Error(ctx, "error shutting down server", zap.Error(err))
-		}
-	}()
-
-	ctxlog.Info(ctx, "starting server", zap.String("addr", s.addr))
-	return srv.ListenAndServe()
+		Service: "jaunty",
+		Router:  s.router(ctx),
+	})
 }

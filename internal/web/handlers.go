@@ -10,6 +10,7 @@ import (
 
 	"github.com/go-redis/redis/v8"
 	"github.com/gofrs/uuid"
+	"github.com/holedaemon/web/middleware"
 	"github.com/jaunty/jaunty/internal/database/models"
 	"github.com/jaunty/jaunty/internal/database/modelsx"
 	"github.com/jaunty/jaunty/internal/pkg/api/mojang"
@@ -61,7 +62,7 @@ func (s *Server) postJoin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tx := txFromCtx(ctx)
+	tx := middleware.TxFromContext(ctx)
 
 	exists, err := models.Whitelists(qm.Where("uuid = ?", uid)).Exists(ctx, tx)
 	if err != nil {
@@ -115,7 +116,7 @@ func (s *Server) postJoin(w http.ResponseWriter, r *http.Request) {
 func (s *Server) dashboard(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	sess := s.getSession(r)
-	tx := txFromCtx(ctx)
+	tx := middleware.TxFromContext(ctx)
 
 	wr, err := models.Whitelists(qm.Where("sf = ?", sess.getSnowflake())).All(ctx, tx)
 	if err != nil {
@@ -159,7 +160,7 @@ func (s *Server) postAccountDelete(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	sess := s.getSession(r)
 	sf := sess.getSnowflake()
-	tx := txFromCtx(ctx)
+	tx := middleware.TxFromContext(ctx)
 
 	user, err := models.Users(qm.Where("sf = ?", sf)).One(ctx, tx)
 	if err != nil {
@@ -234,7 +235,7 @@ func (s *Server) postRequestCancel(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tx := txFromCtx(ctx)
+	tx := middleware.TxFromContext(ctx)
 
 	sess := s.getSession(r)
 	req, err := models.Whitelists(qm.Where("id = ? AND sf = ?", i, sess.getSnowflake())).One(ctx, tx)
@@ -325,7 +326,7 @@ func (s *Server) authDiscordCallback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tx := txFromCtx(ctx)
+	tx := middleware.TxFromContext(ctx)
 
 	exists, err := models.Users(qm.Where("sf = ?", user.ID)).Exists(ctx, tx)
 	if err != nil {

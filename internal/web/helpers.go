@@ -1,20 +1,14 @@
 package web
 
 import (
-	"context"
-	"database/sql"
+	"net/http"
+
+	"github.com/jaunty/jaunty/internal/web/templates"
 )
 
-func txFromCtx(ctx context.Context) *sql.Tx {
-	tr := ctx.Value(txKey{})
-	if tr == nil {
-		panic("web: tx not present in ctx")
-	}
-
-	tx, ok := tr.(*sql.Tx)
-	if !ok {
-		panic("web: tx is not of type *sql.Tx")
-	}
-
-	return tx
+func (s *Server) recoverFunc(w http.ResponseWriter, r *http.Request) {
+	templates.WritePageTemplate(w, &templates.ErrorPage{
+		BasePage: s.basePage(r),
+		Message:  "Internal Server Error",
+	})
 }
