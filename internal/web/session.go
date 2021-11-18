@@ -52,10 +52,6 @@ func (s *session) setSnowflake(username string) {
 	s.setValue(sessionDiscordSnowflake, username)
 }
 
-func (s *session) setAvatar(avatar string) {
-	s.setValue(sessionDiscordAvatar, avatar)
-}
-
 func (s *session) getValue(k string) string {
 	v, ok := s.s.Values[k].(string)
 	if !ok {

@@ -2,8 +2,9 @@ package cli
 
 import (
 	"context"
+	"strings"
 
-	"github.com/jaunty/jaunty/internal/pkg/api/discord"
+	"github.com/disaccord/beelzebub"
 	"github.com/jaunty/jaunty/internal/pkg/api/mojang"
 	"github.com/jaunty/jaunty/internal/pkg/dbx"
 	"github.com/jaunty/jaunty/internal/pkg/redisx"
@@ -61,11 +62,14 @@ func (w *Web) Run(ctx context.Context, debug bool) error {
 		Scopes:       w.Scopes,
 	}
 
-	dsc, err := discord.New(&discord.Options{
-		BotToken: w.BotToken,
-		Redis:    rdb,
-		OAuth2:   oa,
-	})
+	var token string
+	if !strings.HasPrefix(token, "Bot ") {
+		token = "Bot " + w.BotToken
+	} else {
+		token = w.BotToken
+	}
+
+	dsc, err := beelzebub.New(token)
 	if err != nil {
 		return err
 	}
@@ -83,8 +87,10 @@ func (w *Web) Run(ctx context.Context, debug bool) error {
 		DB:          db,
 		Redis:       rdb,
 		MaxRequests: w.MaxRequests,
+		GuildID:     w.GuildID,
 
 		Discord: dsc,
+		OAuth2:  oa,
 		Mojang:  moj,
 	}
 

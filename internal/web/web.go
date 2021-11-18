@@ -7,15 +7,16 @@ import (
 	"io/fs"
 	"net/http"
 
+	"github.com/disaccord/beelzebub"
 	"github.com/go-chi/chi/v5"
 	"github.com/gorilla/sessions"
 	"github.com/holedaemon/web"
 	"github.com/holedaemon/web/middleware"
-	"github.com/jaunty/jaunty/internal/pkg/api/discord"
 	"github.com/jaunty/jaunty/internal/pkg/api/mojang"
 	"github.com/jaunty/jaunty/internal/pkg/redisx"
 	"github.com/jaunty/jaunty/internal/web/templates"
 	"github.com/zikaeroh/ctxlog"
+	"golang.org/x/oauth2"
 )
 
 //go:embed static
@@ -36,10 +37,12 @@ type Options struct {
 	Addr        string
 	SessionKey  []byte
 	MaxRequests int
+	GuildID     string
 
 	DB      *sql.DB
 	Redis   *redisx.Redis
-	Discord *discord.Client
+	OAuth2  *oauth2.Config
+	Discord *beelzebub.Devil
 	Mojang  *mojang.Client
 }
 
@@ -52,9 +55,11 @@ type Server struct {
 	store sessions.Store
 
 	db      *sql.DB
-	discord *discord.Client
-	mojang  *mojang.Client
-	redis   *redisx.Redis
+	discord *beelzebub.Devil
+	oauth2  *oauth2.Config
+
+	mojang *mojang.Client
+	redis  *redisx.Redis
 }
 
 // New creates a new Server.
@@ -64,6 +69,8 @@ func New(opts *Options) (*Server, error) {
 		maxRequests: opts.MaxRequests,
 		db:          opts.DB,
 		discord:     opts.Discord,
+		oauth2:      opts.OAuth2,
+		guildID:     opts.GuildID,
 		mojang:      opts.Mojang,
 		redis:       opts.Redis,
 		store:       sessions.NewCookieStore(opts.SessionKey),

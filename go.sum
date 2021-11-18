@@ -91,6 +91,14 @@ github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSs
 github.com/denisenkom/go-mssqldb v0.10.0/go.mod h1:xbL0rPBG9cCiLr28tMa8zpbdarY27NDyej4t/EjAShU=
 github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f h1:lO4WD4F/rVNCu3HqELle0jiPLLBs70cWOduZpkS1E78=
 github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f/go.mod h1:cuUVRXasLTGF7a8hSLbxyZXjz+1KgoB3wDUb6vlszIc=
+github.com/disaccord/beelzebub v0.0.0-20211118125943-dc3dcc434c36 h1:zY1/6vON8E7umyik2JoqkiUW5P0m/g7513jPMZKiYAY=
+github.com/disaccord/beelzebub v0.0.0-20211118125943-dc3dcc434c36/go.mod h1:xu8DcKTpa3VjSLmauAUUvtsErQT7g+WqqlwHDNX/2MU=
+github.com/disaccord/null v0.0.0-20211114195643-53cc2c947855 h1:1iQJBNZCco5TjaR39qxMuG2dgXZPwafyd2ztQrtsHCI=
+github.com/disaccord/null v0.0.0-20211114195643-53cc2c947855/go.mod h1:nB+QZ1VN7Br6iTD8xr10XvE75E8AK3zjEYRGrYgKADY=
+github.com/disaccord/rate v0.0.0-20211107001806-d2b4e3962140 h1:icHGOinXBF6ACDHYXDEdyiIm8bg7N9I4hUvpadNDu9U=
+github.com/disaccord/rate v0.0.0-20211107001806-d2b4e3962140/go.mod h1:/xdDMMKg9Av09J2BP7oyoDbc8IDsydFwvkcyuFVM1Nk=
+github.com/disaccord/sigil v0.0.0-20211116005353-c1138354e869 h1:n4tjPjO8k+jBzII8UH9WJVnJoz6kkyFhuAYPGoGEVJI=
+github.com/disaccord/sigil v0.0.0-20211116005353-c1138354e869/go.mod h1:MwOxYo2TZcy2xgnFLcQIX2HgdPvCmv+QmUwAIJ3xWdg=
 github.com/envoyproxy/go-control-plane v0.9.0/go.mod h1:YTl/9mNaCwkRvm6d1a2C3ymFceY/DCBVvsKhRF0iEA4=
 github.com/envoyproxy/go-control-plane v0.9.1-0.20191026205805-5f8ba28d4473/go.mod h1:YTl/9mNaCwkRvm6d1a2C3ymFceY/DCBVvsKhRF0iEA4=
 github.com/envoyproxy/go-control-plane v0.9.4/go.mod h1:6rpuAdCZL397s3pYoYcLgu1mIlRU8Am5FuJP05cCM98=
@@ -234,10 +242,8 @@ github.com/hashicorp/memberlist v0.1.3/go.mod h1:ajVTdAv/9Im8oMAAj5G31PhhMCZJV2p
 github.com/hashicorp/memberlist v0.2.2/go.mod h1:MS2lj3INKhZjWNqd3N0m3J+Jxf3DAOnAH9VT3Sh9MUE=
 github.com/hashicorp/serf v0.8.2/go.mod h1:6hOLApaqBFA1NXqRQAsxw9QxuDEvNxSQRwA/JwenrHc=
 github.com/hashicorp/serf v0.9.5/go.mod h1:UWDWwZeL5cuWDJdl0C6wrvrUwEqtQ4ZKBKKENpqIUyk=
-github.com/holedaemon/tumult v0.0.0-20211002201713-4a57ba587b90 h1:AfsiBMa+XOYB+EZjFXK+xlRFZaPSVtO2f9aUOxJIW1s=
-github.com/holedaemon/tumult v0.0.0-20211002201713-4a57ba587b90/go.mod h1:kD04fjkM+9J7ynv4mVP1meD4goNiH7tdDxm5ehGX6a0=
-github.com/holedaemon/web v0.0.0-20211029193213-5118914d6ebd h1:op6I5IIqICQuwy/MIobQ7eh58Bumt+0MbjPF0X0D13I=
-github.com/holedaemon/web v0.0.0-20211029193213-5118914d6ebd/go.mod h1:XEwJUbosuTZ+cNpLhnTbpmHND69tQQpaxVBuvMrmiQo=
+github.com/holedaemon/httpx v0.0.0-20211105015616-47ad4b56ad87 h1:VBjMnypH0nJFN6q07YlKGtpiEVM3JRv8TS6r19/aieY=
+github.com/holedaemon/httpx v0.0.0-20211105015616-47ad4b56ad87/go.mod h1:9f3KKzL2RWJCNzAqoQH2HSqORJOqlfYfqLOLlJosY5U=
 github.com/holedaemon/web v0.0.0-20211117195724-ad5a18de995a h1:d1Sj16aVRbNvXZU7j99w5WaRnsPSpyyxMLXpO+F5szw=
 github.com/holedaemon/web v0.0.0-20211117195724-ad5a18de995a/go.mod h1:XEwJUbosuTZ+cNpLhnTbpmHND69tQQpaxVBuvMrmiQo=
 github.com/hpcloud/tail v1.0.0/go.mod h1:ab1qPbhIpdTxEkNHXyeSf5vhxWSCs/tWer42PpOxQnU=

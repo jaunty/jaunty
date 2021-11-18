@@ -3,11 +3,13 @@ package web
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 	"net/http"
 	"net/url"
 	"strconv"
 	"time"
 
+	"github.com/disaccord/beelzebub/flies/guild"
 	"github.com/go-redis/redis/v8"
 	"github.com/gofrs/uuid"
 	"github.com/holedaemon/web/middleware"
@@ -180,15 +182,22 @@ func (s *Server) postAccountDelete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := s.discord.DeleteGuildMemberWithReason(ctx, s.guildID, sf, "User has deleted their Jaunty account"); err != nil {
-		ctxlog.Error(ctx, "error kicking user from the discord", zap.Error(err))
-		s.serveError(w, r, "Unable to kick user from Discord; account deleted otherwise.")
-		return
-	}
-
 	if err := tx.Commit(); err != nil {
 		ctxlog.Error(ctx, "error committing transaction", zap.Error(err))
 		s.serveError(w, r, "Error committing transaction")
+		return
+	}
+
+	gf := s.discord.Guild(s.guildID)
+	err = gf.RemoveMember(ctx, sf, "User has deleted their Jaunty account.")
+	if err != nil {
+		ctxlog.Error(ctx, "error kicking user from the discord", zap.Error(err))
+		templates.WritePageTemplate(w, &templates.SuccessPage{
+			BasePage:  s.basePage(r),
+			PageTitle: "Account Deleted",
+			Header:    "Account has been deleted",
+			SubHeader: "For some reason I was not able to kick you from Discord, you should be nice and leave.",
+		})
 		return
 	}
 
@@ -287,7 +296,7 @@ func (s *Server) authDiscord(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	url := s.discord.AuthCodeURL(state, oauth2.AccessTypeOffline)
+	url := s.oauth2.AuthCodeURL(state, oauth2.AccessTypeOffline)
 	http.Redirect(w, r, url, http.StatusSeeOther)
 }
 
@@ -312,17 +321,28 @@ func (s *Server) authDiscordCallback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token, err := s.discord.Exchange(ctx, r.FormValue("code"))
+	token, err := s.oauth2.Exchange(ctx, r.FormValue("code"))
 	if err != nil {
 		ctxlog.Error(ctx, "error exchanging code", zap.Error(err))
 		s.serveError(w, r, "Error exchanging OAuth2 code for access token")
 		return
 	}
 
-	user, err := s.discord.GetCurrentUser(ctx, token.AccessToken)
+	uf := s.discord.UserWithToken(fmt.Sprintf("Bearer %s", token.AccessToken))
+	user, err := uf.Get(ctx)
 	if err != nil {
 		ctxlog.Error(ctx, "error getting user from discord", zap.Error(err))
 		s.serveError(w, r, "Error getting user from Discord's API")
+		return
+	}
+
+	gf := s.discord.Guild(s.guildID)
+	_, err = gf.AddMember(ctx, user.ID, &guild.AddMemberOptions{
+		AccessToken: token.AccessToken,
+	})
+	if err != nil {
+		ctxlog.Error(ctx, "error adding user to discord", zap.Error(err))
+		s.serveError(w, r, "Error adding user to the Discord server.")
 		return
 	}
 
@@ -364,7 +384,6 @@ func (s *Server) authDiscordCallback(w http.ResponseWriter, r *http.Request) {
 	sess.clear()
 	sess.setSnowflake(user.ID)
 	sess.setUsername(user.Username + "#" + user.Discriminator)
-	sess.setAvatar(user.Avatar.String)
 
 	if err := sess.save(w, r); err != nil {
 		ctxlog.Error(ctx, "error saving session", zap.Error(err))
