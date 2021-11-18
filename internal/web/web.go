@@ -97,11 +97,6 @@ func (s *Server) router(ctx context.Context) *chi.Mux {
 		middleware.Transaction(s.db),
 	)
 
-	r.Use(
-		middleware.Logger(ctxlog.FromContext(ctx)),
-	)
-	r.Use(middleware.RequestID)
-
 	r.Get("/", s.index)
 
 	r.Group(func(r chi.Router) {

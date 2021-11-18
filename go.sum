@@ -236,8 +236,6 @@ github.com/hashicorp/serf v0.8.2/go.mod h1:6hOLApaqBFA1NXqRQAsxw9QxuDEvNxSQRwA/J
 github.com/hashicorp/serf v0.9.5/go.mod h1:UWDWwZeL5cuWDJdl0C6wrvrUwEqtQ4ZKBKKENpqIUyk=
 github.com/holedaemon/tumult v0.0.0-20211002201713-4a57ba587b90 h1:AfsiBMa+XOYB+EZjFXK+xlRFZaPSVtO2f9aUOxJIW1s=
 github.com/holedaemon/tumult v0.0.0-20211002201713-4a57ba587b90/go.mod h1:kD04fjkM+9J7ynv4mVP1meD4goNiH7tdDxm5ehGX6a0=
-github.com/holedaemon/web v0.0.0-20211029193213-5118914d6ebd h1:op6I5IIqICQuwy/MIobQ7eh58Bumt+0MbjPF0X0D13I=
-github.com/holedaemon/web v0.0.0-20211029193213-5118914d6ebd/go.mod h1:XEwJUbosuTZ+cNpLhnTbpmHND69tQQpaxVBuvMrmiQo=
 github.com/holedaemon/web v0.0.0-20211117195724-ad5a18de995a h1:d1Sj16aVRbNvXZU7j99w5WaRnsPSpyyxMLXpO+F5szw=
 github.com/holedaemon/web v0.0.0-20211117195724-ad5a18de995a/go.mod h1:XEwJUbosuTZ+cNpLhnTbpmHND69tQQpaxVBuvMrmiQo=
 github.com/hpcloud/tail v1.0.0/go.mod h1:ab1qPbhIpdTxEkNHXyeSf5vhxWSCs/tWer42PpOxQnU=
