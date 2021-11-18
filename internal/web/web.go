@@ -37,7 +37,10 @@ type Options struct {
 	Addr        string
 	SessionKey  []byte
 	MaxRequests int
-	GuildID     string
+
+	GuildID               string
+	WhitelistChannelID    string
+	NotificationChannelID string
 
 	DB      *sql.DB
 	Redis   *redisx.Redis
@@ -50,10 +53,12 @@ type Options struct {
 type Server struct {
 	addr        string
 	maxRequests int
-	guildID     string
 
-	store sessions.Store
+	guildID               string
+	whitelistChannelID    string
+	notificationChannelID string
 
+	store   sessions.Store
 	db      *sql.DB
 	discord *beelzebub.Devil
 	oauth2  *oauth2.Config
