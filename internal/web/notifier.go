@@ -7,6 +7,7 @@ import (
 
 	"github.com/disaccord/beelzebub/flies/channel"
 	"github.com/disaccord/sigil"
+	"github.com/disaccord/sigil/cmbuilder"
 	"github.com/disaccord/sigil/embuilder"
 )
 
@@ -23,9 +24,28 @@ func (s *Server) SendWhitelistNotification(ctx context.Context, u *sigil.User) e
 	embeds := make([]*sigil.Embed, 0, 1)
 	embeds = append(embeds, e)
 
+	row := cmbuilder.NewActionRow(
+		cmbuilder.Buttons(
+			cmbuilder.NewButton(
+				cmbuilder.CustomButtonID("whitelist-request-approve"),
+				cmbuilder.Style(sigil.ButtonStyleSuccess),
+				cmbuilder.Label("Approve"),
+			),
+			cmbuilder.NewButton(
+				cmbuilder.CustomButtonID("whitelist-request-deny"),
+				cmbuilder.Style(sigil.ButtonStyleDanger),
+				cmbuilder.Label("Deny"),
+			),
+		),
+	)
+
+	rows := make([]*sigil.ActionRow, 0, 1)
+	rows = append(rows, row)
+
 	ch := s.discord.Channel(s.whitelistChannelID)
 	_, err := ch.CreateMessage(ctx, &channel.CreateMessageOptions{
-		Embeds: embeds,
+		Embeds:     embeds,
+		Components: rows,
 	})
 
 	return err

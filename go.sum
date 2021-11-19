@@ -93,13 +93,15 @@ github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f h1:lO4WD4F/r
 github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f/go.mod h1:cuUVRXasLTGF7a8hSLbxyZXjz+1KgoB3wDUb6vlszIc=
 github.com/disaccord/beelzebub v0.0.0-20211118125943-dc3dcc434c36 h1:zY1/6vON8E7umyik2JoqkiUW5P0m/g7513jPMZKiYAY=
 github.com/disaccord/beelzebub v0.0.0-20211118125943-dc3dcc434c36/go.mod h1:xu8DcKTpa3VjSLmauAUUvtsErQT7g+WqqlwHDNX/2MU=
+github.com/disaccord/beelzebub v0.0.0-20211119133058-55dac44ba358 h1:UeWCKF0T+I97ozPUIsKrcp18l7/8+MGuSRMOxwYAw+c=
+github.com/disaccord/beelzebub v0.0.0-20211119133058-55dac44ba358/go.mod h1:lzqUCavP3fxH6yTgu0Vx3JLVV/8p5Aed7Gm5BZWApaI=
 github.com/disaccord/null v0.0.0-20211114195643-53cc2c947855 h1:1iQJBNZCco5TjaR39qxMuG2dgXZPwafyd2ztQrtsHCI=
 github.com/disaccord/null v0.0.0-20211114195643-53cc2c947855/go.mod h1:nB+QZ1VN7Br6iTD8xr10XvE75E8AK3zjEYRGrYgKADY=
 github.com/disaccord/rate v0.0.0-20211107001806-d2b4e3962140 h1:icHGOinXBF6ACDHYXDEdyiIm8bg7N9I4hUvpadNDu9U=
 github.com/disaccord/rate v0.0.0-20211107001806-d2b4e3962140/go.mod h1:/xdDMMKg9Av09J2BP7oyoDbc8IDsydFwvkcyuFVM1Nk=
 github.com/disaccord/sigil v0.0.0-20211116005353-c1138354e869/go.mod h1:MwOxYo2TZcy2xgnFLcQIX2HgdPvCmv+QmUwAIJ3xWdg=
-github.com/disaccord/sigil v0.0.0-20211118220714-04b26ff40e9e h1:MiGDiCp/qAh+7EFJ+cYU8ygCzDfo2UMzdbalEDjPCh8=
-github.com/disaccord/sigil v0.0.0-20211118220714-04b26ff40e9e/go.mod h1:MwOxYo2TZcy2xgnFLcQIX2HgdPvCmv+QmUwAIJ3xWdg=
+github.com/disaccord/sigil v0.0.0-20211119125335-462cbd227ddf h1:vSSmb1rAklZnej1SRxyn8Wv0WXQbTMT7MytIcm9yckw=
+github.com/disaccord/sigil v0.0.0-20211119125335-462cbd227ddf/go.mod h1:MwOxYo2TZcy2xgnFLcQIX2HgdPvCmv+QmUwAIJ3xWdg=
 github.com/envoyproxy/go-control-plane v0.9.0/go.mod h1:YTl/9mNaCwkRvm6d1a2C3ymFceY/DCBVvsKhRF0iEA4=
 github.com/envoyproxy/go-control-plane v0.9.1-0.20191026205805-5f8ba28d4473/go.mod h1:YTl/9mNaCwkRvm6d1a2C3ymFceY/DCBVvsKhRF0iEA4=
 github.com/envoyproxy/go-control-plane v0.9.4/go.mod h1:6rpuAdCZL397s3pYoYcLgu1mIlRU8Am5FuJP05cCM98=

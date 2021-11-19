@@ -4,8 +4,8 @@ go 1.17
 
 require (
 	github.com/alecthomas/kong v0.2.18-0.20211015044717-749d3f0752b5
-	github.com/disaccord/beelzebub v0.0.0-20211118125943-dc3dcc434c36
-	github.com/disaccord/sigil v0.0.0-20211118220714-04b26ff40e9e
+	github.com/disaccord/beelzebub v0.0.0-20211119133058-55dac44ba358
+	github.com/disaccord/sigil v0.0.0-20211119125335-462cbd227ddf
 	github.com/friendsofgo/errors v0.9.2
 	github.com/go-chi/chi/v5 v5.0.5
 	github.com/go-redis/redis v6.15.9+incompatible
