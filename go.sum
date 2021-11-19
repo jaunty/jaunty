@@ -97,10 +97,7 @@ github.com/disaccord/null v0.0.0-20211114195643-53cc2c947855 h1:1iQJBNZCco5TjaR3
 github.com/disaccord/null v0.0.0-20211114195643-53cc2c947855/go.mod h1:nB+QZ1VN7Br6iTD8xr10XvE75E8AK3zjEYRGrYgKADY=
 github.com/disaccord/rate v0.0.0-20211107001806-d2b4e3962140 h1:icHGOinXBF6ACDHYXDEdyiIm8bg7N9I4hUvpadNDu9U=
 github.com/disaccord/rate v0.0.0-20211107001806-d2b4e3962140/go.mod h1:/xdDMMKg9Av09J2BP7oyoDbc8IDsydFwvkcyuFVM1Nk=
-github.com/disaccord/sigil v0.0.0-20211116005353-c1138354e869 h1:n4tjPjO8k+jBzII8UH9WJVnJoz6kkyFhuAYPGoGEVJI=
 github.com/disaccord/sigil v0.0.0-20211116005353-c1138354e869/go.mod h1:MwOxYo2TZcy2xgnFLcQIX2HgdPvCmv+QmUwAIJ3xWdg=
-github.com/disaccord/sigil v0.0.0-20211117001001-456e3137d926 h1:912nDbvO3/0Q8DphYld39NVCFFNeXCBd2g+jupCRmxM=
-github.com/disaccord/sigil v0.0.0-20211117001001-456e3137d926/go.mod h1:MwOxYo2TZcy2xgnFLcQIX2HgdPvCmv+QmUwAIJ3xWdg=
 github.com/disaccord/sigil v0.0.0-20211118220714-04b26ff40e9e h1:MiGDiCp/qAh+7EFJ+cYU8ygCzDfo2UMzdbalEDjPCh8=
 github.com/disaccord/sigil v0.0.0-20211118220714-04b26ff40e9e/go.mod h1:MwOxYo2TZcy2xgnFLcQIX2HgdPvCmv+QmUwAIJ3xWdg=
 github.com/envoyproxy/go-control-plane v0.9.0/go.mod h1:YTl/9mNaCwkRvm6d1a2C3ymFceY/DCBVvsKhRF0iEA4=

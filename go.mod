@@ -5,6 +5,7 @@ go 1.17
 require (
 	github.com/alecthomas/kong v0.2.18-0.20211015044717-749d3f0752b5
 	github.com/disaccord/beelzebub v0.0.0-20211118125943-dc3dcc434c36
+	github.com/disaccord/sigil v0.0.0-20211118220714-04b26ff40e9e
 	github.com/friendsofgo/errors v0.9.2
 	github.com/go-chi/chi/v5 v5.0.5
 	github.com/go-redis/redis v6.15.9+incompatible
@@ -28,7 +29,6 @@ require (
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/disaccord/null v0.0.0-20211114195643-53cc2c947855 // indirect
 	github.com/disaccord/rate v0.0.0-20211107001806-d2b4e3962140 // indirect
-	github.com/disaccord/sigil v0.0.0-20211118220714-04b26ff40e9e // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/go-cmp v0.5.6 // indirect
 	github.com/gorilla/securecookie v1.1.1 // indirect
