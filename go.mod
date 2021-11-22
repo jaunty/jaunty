@@ -6,7 +6,7 @@ require (
 	github.com/alecthomas/kong v0.2.18-0.20211015044717-749d3f0752b5
 	github.com/disaccord/beelzebub v0.0.0-20211119133058-55dac44ba358
 	github.com/disaccord/behemoth v0.0.0-20211120210425-ef0d415d1f69
-	github.com/disaccord/sigil v0.0.0-20211121013056-d738c63f7380
+	github.com/disaccord/sigil v0.0.0-20211122044956-2f98257dcca3
 	github.com/friendsofgo/errors v0.9.2
 	github.com/go-chi/chi/v5 v5.0.5
 	github.com/go-redis/redis v6.15.9+incompatible
@@ -55,7 +55,3 @@ require (
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/protobuf v1.27.1 // indirect
 )
-
-replace github.com/disaccord/beelzebub => ../../disaccord/beelzebub
-
-replace github.com/disaccord/sigil => ../../disaccord/sigil
