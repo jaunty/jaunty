@@ -42,6 +42,7 @@ type Options struct {
 	GuildID               string
 	WhitelistChannelID    string
 	NotificationChannelID string
+	UnapprovedRoleID      string
 
 	Interactions *behemoth.Beast
 	DB           *sql.DB
