@@ -109,6 +109,10 @@ func (s *Server) postJoin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if err := s.SendWhitelistNotification(ctx, sess.getUsername(), un); err != nil {
+		ctxlog.Error(ctx, "error sending notification to channel", zap.Error(err))
+	}
+
 	templates.WritePageTemplate(w, &templates.NewRequestPage{
 		BasePage: s.basePage(r),
 		Username: un,
@@ -186,6 +190,14 @@ func (s *Server) postAccountDelete(w http.ResponseWriter, r *http.Request) {
 		ctxlog.Error(ctx, "error committing transaction", zap.Error(err))
 		s.serveError(w, r, "Error committing transaction")
 		return
+	}
+
+	if err := s.SendSiteNotification(ctx, "Account Deleted", sess.getUsername()); err != nil {
+		ctxlog.Error(ctx, "error sending notification", zap.Error(err))
+	}
+
+	if err := s.destroySession(w, r); err != nil {
+		ctxlog.Error(ctx, "error destroying session", zap.Error(err))
 	}
 
 	gf := s.discord.Guild(s.guildID)
@@ -383,7 +395,9 @@ func (s *Server) authDiscordCallback(w http.ResponseWriter, r *http.Request) {
 	sess := s.getSession(r)
 	sess.clear()
 	sess.setSnowflake(user.ID)
-	sess.setUsername(user.Username + "#" + user.Discriminator)
+	sess.setUsername(
+		fmt.Sprintf("%s#%s", user.Username, user.Discriminator),
+	)
 
 	if err := sess.save(w, r); err != nil {
 		ctxlog.Error(ctx, "error saving session", zap.Error(err))

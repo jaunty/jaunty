@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"github.com/disaccord/beelzebub"
+	"github.com/disaccord/behemoth"
 	"github.com/go-chi/chi/v5"
 	"github.com/gorilla/sessions"
 	"github.com/holedaemon/web"
@@ -42,11 +43,12 @@ type Options struct {
 	WhitelistChannelID    string
 	NotificationChannelID string
 
-	DB      *sql.DB
-	Redis   *redisx.Redis
-	OAuth2  *oauth2.Config
-	Discord *beelzebub.Devil
-	Mojang  *mojang.Client
+	Interactions *behemoth.Beast
+	DB           *sql.DB
+	Redis        *redisx.Redis
+	OAuth2       *oauth2.Config
+	Discord      *beelzebub.Devil
+	Mojang       *mojang.Client
 }
 
 // Server is responsible for serving the website and auth server.
@@ -58,10 +60,11 @@ type Server struct {
 	whitelistChannelID    string
 	notificationChannelID string
 
-	store   sessions.Store
-	db      *sql.DB
-	discord *beelzebub.Devil
-	oauth2  *oauth2.Config
+	interactions *behemoth.Beast
+	store        sessions.Store
+	db           *sql.DB
+	discord      *beelzebub.Devil
+	oauth2       *oauth2.Config
 
 	mojang *mojang.Client
 	redis  *redisx.Redis
@@ -70,15 +73,18 @@ type Server struct {
 // New creates a new Server.
 func New(opts *Options) (*Server, error) {
 	s := &Server{
-		addr:        opts.Addr,
-		maxRequests: opts.MaxRequests,
-		db:          opts.DB,
-		discord:     opts.Discord,
-		oauth2:      opts.OAuth2,
-		guildID:     opts.GuildID,
-		mojang:      opts.Mojang,
-		redis:       opts.Redis,
-		store:       sessions.NewCookieStore(opts.SessionKey),
+		addr:                  opts.Addr,
+		maxRequests:           opts.MaxRequests,
+		db:                    opts.DB,
+		discord:               opts.Discord,
+		oauth2:                opts.OAuth2,
+		whitelistChannelID:    opts.WhitelistChannelID,
+		notificationChannelID: opts.NotificationChannelID,
+		interactions:          opts.Interactions,
+		guildID:               opts.GuildID,
+		mojang:                opts.Mojang,
+		redis:                 opts.Redis,
+		store:                 sessions.NewCookieStore(opts.SessionKey),
 	}
 
 	return s, nil

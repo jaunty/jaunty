@@ -25,7 +25,8 @@ type Web struct {
 	DSN        string `help:"PostgreSQL DSN." required:"" env:"JAUNTY_DB_DSN"`
 	Redis      string `help:"Address to Redis server." required:"" env:"JAUNTY_REDIS_ADDR"`
 
-	GuildID string `help:"Guild ID for the associated Discord" required:"" env:"JAUNTY_GUILD_ID"`
+	GuildID            string `help:"Guild ID for the associated Discord" required:"" env:"JAUNTY_GUILD_ID"`
+	WhitelistChannelID string `help:"Channel ID for the whitelist notifications channel" required:"" env:"JAUNTY_WHITELIST_CHANNEL_ID"`
 
 	MaxRequests int `help:"Maximum whitelist requests per user." default:"2" env:"JAUNTY_MAX_REQUESTS"`
 
@@ -82,12 +83,13 @@ func (w *Web) Run(ctx context.Context, debug bool) error {
 	}
 
 	opts := &web.Options{
-		Addr:        w.Addr,
-		SessionKey:  []byte(w.SessionKey),
-		DB:          db,
-		Redis:       rdb,
-		MaxRequests: w.MaxRequests,
-		GuildID:     w.GuildID,
+		Addr:               w.Addr,
+		SessionKey:         []byte(w.SessionKey),
+		DB:                 db,
+		Redis:              rdb,
+		MaxRequests:        w.MaxRequests,
+		GuildID:            w.GuildID,
+		WhitelistChannelID: w.WhitelistChannelID,
 
 		Discord: dsc,
 		OAuth2:  oa,
