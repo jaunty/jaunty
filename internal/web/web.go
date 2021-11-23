@@ -9,6 +9,7 @@ import (
 
 	"github.com/disaccord/beelzebub"
 	"github.com/disaccord/behemoth"
+	"github.com/disaccord/sigil"
 	"github.com/go-chi/chi/v5"
 	"github.com/gorilla/sessions"
 	"github.com/holedaemon/web"
@@ -38,18 +39,18 @@ type Options struct {
 	Addr        string
 	SessionKey  []byte
 	MaxRequests int
+	PublicKey   string
 
 	GuildID               string
 	WhitelistChannelID    string
 	NotificationChannelID string
 	UnapprovedRoleID      string
 
-	Interactions *behemoth.Beast
-	DB           *sql.DB
-	Redis        *redisx.Redis
-	OAuth2       *oauth2.Config
-	Discord      *beelzebub.Devil
-	Mojang       *mojang.Client
+	DB      *sql.DB
+	Redis   *redisx.Redis
+	OAuth2  *oauth2.Config
+	Discord *beelzebub.Devil
+	Mojang  *mojang.Client
 }
 
 // Server is responsible for serving the website and auth server.
@@ -81,12 +82,23 @@ func New(opts *Options) (*Server, error) {
 		oauth2:                opts.OAuth2,
 		whitelistChannelID:    opts.WhitelistChannelID,
 		notificationChannelID: opts.NotificationChannelID,
-		interactions:          opts.Interactions,
 		guildID:               opts.GuildID,
 		mojang:                opts.Mojang,
 		redis:                 opts.Redis,
 		store:                 sessions.NewCookieStore(opts.SessionKey),
 	}
+
+	b, err := behemoth.New(&behemoth.Options{
+		PublicKey: opts.PublicKey,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	b.AddHandler(sigil.InteractionTypeMessageComponent, "whitelist-approve", s.ApproveWhitelistHook)
+	b.AddHandler(sigil.InteractionTypeMessageComponent, "whitelist-reject", s.RejectWhitelistHook)
+
+	s.interactions = b
 
 	return s, nil
 }
@@ -136,6 +148,7 @@ func (s *Server) router(ctx context.Context) *chi.Mux {
 	r.Get("/auth/callback", s.authDiscordCallback)
 	r.Get("/auth/destroy", s.destroyAuth)
 	r.Get("/logout", s.destroyAuth)
+	r.Post("/webhook", s.interactions.HandleWebhook)
 
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
 		templates.WritePageTemplate(w, &templates.ErrorPage{
