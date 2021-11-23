@@ -75,17 +75,21 @@ type Server struct {
 // New creates a new Server.
 func New(opts *Options) (*Server, error) {
 	s := &Server{
-		addr:                  opts.Addr,
-		maxRequests:           opts.MaxRequests,
-		db:                    opts.DB,
-		discord:               opts.Discord,
-		oauth2:                opts.OAuth2,
+		addr:        opts.Addr,
+		maxRequests: opts.MaxRequests,
+
 		whitelistChannelID:    opts.WhitelistChannelID,
 		notificationChannelID: opts.NotificationChannelID,
 		guildID:               opts.GuildID,
-		mojang:                opts.Mojang,
-		redis:                 opts.Redis,
-		store:                 sessions.NewCookieStore(opts.SessionKey),
+
+		db:    opts.DB,
+		redis: opts.Redis,
+
+		discord: opts.Discord,
+		oauth2:  opts.OAuth2,
+		mojang:  opts.Mojang,
+
+		store: sessions.NewCookieStore(opts.SessionKey),
 	}
 
 	b, err := behemoth.New(&behemoth.Options{
@@ -101,21 +105,6 @@ func New(opts *Options) (*Server, error) {
 	s.interactions = b
 
 	return s, nil
-}
-
-func (s *Server) basePage(r *http.Request) *templates.BasePage {
-	sess := s.getSession(r)
-	bp := new(templates.BasePage)
-
-	if !sess.isNew() {
-		bp.User = &templates.User{
-			Username:  sess.getUsername(),
-			Snowflake: sess.getSnowflake(),
-			Avatar:    sess.getAvatar(),
-		}
-	}
-
-	return bp
 }
 
 func (s *Server) router(ctx context.Context) *chi.Mux {
@@ -160,13 +149,6 @@ func (s *Server) router(ctx context.Context) *chi.Mux {
 	r.Handle("/static/*", http.StripPrefix("/static/", http.FileServer(http.FS(staticDir))))
 
 	return r
-}
-
-func (s *Server) serveError(w http.ResponseWriter, r *http.Request, msg string) {
-	templates.WritePageTemplate(w, &templates.ErrorPage{
-		BasePage: s.basePage(r),
-		Message:  msg,
-	})
 }
 
 // Start runs a Server.
