@@ -17,6 +17,7 @@ import (
 	"github.com/jaunty/jaunty/internal/pkg/api/mojang"
 	"github.com/jaunty/jaunty/internal/pkg/redisx"
 	"github.com/jaunty/jaunty/internal/web/templates"
+	"github.com/willroberts/minecraft-client"
 	"github.com/zikaeroh/ctxlog"
 	"golang.org/x/oauth2"
 )
@@ -48,6 +49,7 @@ type Options struct {
 
 	DB      *sql.DB
 	Redis   *redisx.Redis
+	RCON    *minecraft.Client
 	OAuth2  *oauth2.Config
 	Discord *beelzebub.Devil
 	Mojang  *mojang.Client
@@ -62,14 +64,15 @@ type Server struct {
 	whitelistChannelID    string
 	notificationChannelID string
 
-	interactions *behemoth.Beast
 	store        sessions.Store
-	db           *sql.DB
+	interactions *behemoth.Beast
 	discord      *beelzebub.Devil
 	oauth2       *oauth2.Config
+	mojang       *mojang.Client
 
-	mojang *mojang.Client
-	redis  *redisx.Redis
+	rcon  *minecraft.Client
+	db    *sql.DB
+	redis *redisx.Redis
 }
 
 // New creates a new Server.

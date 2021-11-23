@@ -438,6 +438,8 @@ github.com/volatiletech/sqlboiler/v4 v4.7.1 h1:HpFuILZR9KWA7z4xXzEQriVbD/Tp7Akcc
 github.com/volatiletech/sqlboiler/v4 v4.7.1/go.mod h1:Lyb+AkiwCxSmINv099SgxWULAh0CcsQTmHpc+Z8mRVo=
 github.com/volatiletech/strmangle v0.0.1 h1:UKQoHmY6be/R3tSvD2nQYrH41k43OJkidwEiC74KIzk=
 github.com/volatiletech/strmangle v0.0.1/go.mod h1:F6RA6IkB5vq0yTG4GQ0UsbbRcl3ni9P76i+JrTBKFFg=
+github.com/willroberts/minecraft-client v1.1.0 h1:KvZ0LC4qGBru3n1I2c3rt/0QwVwYPpt+pFB9mb5Cvdw=
+github.com/willroberts/minecraft-client v1.1.0/go.mod h1:kRINRKlBINTJK1cLGLYC8BAUF3bvEbkK0ntHMfsflZ8=
 github.com/yuin/goldmark v1.1.25/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
 github.com/yuin/goldmark v1.1.27/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
 github.com/yuin/goldmark v1.1.32/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=

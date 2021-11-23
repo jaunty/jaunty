@@ -9,6 +9,7 @@ import (
 	"github.com/jaunty/jaunty/internal/pkg/dbx"
 	"github.com/jaunty/jaunty/internal/pkg/redisx"
 	"github.com/jaunty/jaunty/internal/web"
+	"github.com/willroberts/minecraft-client"
 	"github.com/zikaeroh/ctxlog"
 	"golang.org/x/oauth2"
 )
@@ -22,8 +23,11 @@ var endpoint = oauth2.Endpoint{
 type Web struct {
 	Addr       string `help:"Address to listen for connections on." env:"JAUNTY_WEB_ADDR"`
 	SessionKey string `help:"Secret key for session encryption." required:"" env:"JAUNTY_SESSION_KEY"`
-	DSN        string `help:"PostgreSQL DSN." required:"" env:"JAUNTY_DB_DSN"`
-	Redis      string `help:"Address to Redis server." required:"" env:"JAUNTY_REDIS_ADDR"`
+	PublicKey  string `help:"Discord application's public key." required:"" env:"JAUNTY_DISCORD_PUBLIC_KEY"`
+
+	DSN   string `help:"PostgreSQL DSN." required:"" env:"JAUNTY_DB_DSN"`
+	Redis string `help:"Address to Redis server." required:"" env:"JAUNTY_REDIS_ADDR"`
+	RCON  string `help:"Address to RCON server." required:"" env:"JAUNTY_RCON_ADDR"`
 
 	GuildID               string `help:"Guild ID for the associated Discord" required:"" env:"JAUNTY_GUILD_ID"`
 	WhitelistChannelID    string `help:"Channel ID for the whitelist notifications channel" required:"" env:"JAUNTY_WHITELIST_CHANNEL_ID"`
@@ -57,6 +61,13 @@ func (w *Web) Run(ctx context.Context, debug bool) error {
 
 	defer db.Close()
 
+	rcon, err := minecraft.NewClient(w.RCON)
+	if err != nil {
+		return err
+	}
+
+	defer rcon.Close()
+
 	oa := &oauth2.Config{
 		ClientID:     w.ClientID,
 		ClientSecret: w.ClientSecret,
@@ -87,6 +98,7 @@ func (w *Web) Run(ctx context.Context, debug bool) error {
 	opts := &web.Options{
 		Addr:                  w.Addr,
 		SessionKey:            []byte(w.SessionKey),
+		PublicKey:             w.PublicKey,
 		DB:                    db,
 		Redis:                 rdb,
 		MaxRequests:           w.MaxRequests,
@@ -95,6 +107,7 @@ func (w *Web) Run(ctx context.Context, debug bool) error {
 		NotificationChannelID: w.NotificationChannelID,
 		UnapprovedRoleID:      w.UnapprovedRoleID,
 
+		RCON:    rcon,
 		Discord: dsc,
 		OAuth2:  oa,
 		Mojang:  moj,
