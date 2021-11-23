@@ -51,9 +51,6 @@ func (s *Server) SendWhitelistNotification(ctx context.Context, du, mcu string) 
 		embuilder.Field("Minecraft Username", mcu),
 	)
 
-	embeds := make([]*sigil.Embed, 0, 1)
-	embeds = append(embeds, e)
-
 	row := cmbuilder.NewActionRow(
 		cmbuilder.Buttons(
 			cmbuilder.NewButton(
@@ -69,13 +66,10 @@ func (s *Server) SendWhitelistNotification(ctx context.Context, du, mcu string) 
 		),
 	)
 
-	rows := make([]*sigil.ActionRow, 0, 1)
-	rows = append(rows, row)
-
 	ch := s.discord.Channel(s.whitelistChannelID)
 	_, err := ch.CreateMessage(ctx, &channel.CreateMessageOptions{
-		Embeds:     embeds,
-		Components: rows,
+		Embeds:     []*sigil.Embed{e},
+		Components: []*sigil.ActionRow{row},
 	})
 
 	return err
