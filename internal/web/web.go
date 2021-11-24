@@ -6,6 +6,7 @@ import (
 	"embed"
 	"io/fs"
 	"net/http"
+	"time"
 
 	"github.com/disaccord/beelzebub"
 	"github.com/disaccord/behemoth"
@@ -17,9 +18,14 @@ import (
 	"github.com/jaunty/jaunty/internal/pkg/api/mojang"
 	"github.com/jaunty/jaunty/internal/pkg/redisx"
 	"github.com/jaunty/jaunty/internal/web/templates"
+	"github.com/patrickmn/go-cache"
 	"github.com/willroberts/minecraft-client"
 	"github.com/zikaeroh/ctxlog"
 	"golang.org/x/oauth2"
+)
+
+const (
+	cacheExpir = time.Hour * 24
 )
 
 //go:embed static
@@ -70,6 +76,8 @@ type Server struct {
 	oauth2       *oauth2.Config
 	mojang       *mojang.Client
 
+	cache *cache.Cache
+
 	rcon  *minecraft.Client
 	db    *sql.DB
 	redis *redisx.Redis
@@ -91,6 +99,8 @@ func New(opts *Options) (*Server, error) {
 		discord: opts.Discord,
 		oauth2:  opts.OAuth2,
 		mojang:  opts.Mojang,
+
+		cache: cache.New(cacheExpir, cacheExpir),
 
 		store: sessions.NewCookieStore(opts.SessionKey),
 	}
