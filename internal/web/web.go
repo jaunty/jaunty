@@ -108,6 +108,9 @@ func New(opts *Options) (*Server, error) {
 		store: sessions.NewCookieStore(opts.SessionKey),
 	}
 
+	s.interactionHandlers["whitelist-approve"] = s.handlerApproveWhitelist
+	s.interactionHandlers["whitelist-reject"] = s.handlerRejectWhitelist
+
 	return s, nil
 }
 

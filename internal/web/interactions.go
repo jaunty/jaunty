@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 
 	"github.com/disaccord/sigil"
 	"github.com/disaccord/sigil/embuilder"
@@ -56,7 +57,66 @@ func (s *Server) handlerApproveWhitelist(ctx context.Context, i *sigil.Interacti
 		return s.interactionError("Unable to update request"), nil
 	}
 
+	user, err := s.fetchDiscordUser(ctx, wr.SF)
+	if err != nil {
+		ctxlog.Error(ctx, "error fetching user", zap.Error(err))
+		return s.interactionError("Unable to fetch user information"), nil
+	}
+
 	e := embuilder.NewEmbed(
-		embuilder.
+		embuilder.Title("Request Approved"),
+		embuilder.Field("User", fmt.Sprintf("%s#%s", user.Username, user.Discriminator)),
+		embuilder.Color(1680963),
 	)
+
+	return &sigil.InteractionResponse{
+		Type: sigil.InteractionCallbackTypeUpdateMessage,
+		Data: &sigil.Message{
+			Embeds: []*sigil.Embed{e},
+		},
+	}, nil
+}
+
+func (s *Server) handlerRejectWhitelist(ctx context.Context, i *sigil.Interaction, args ...string) (*sigil.InteractionResponse, error) {
+	if len(args) == 0 {
+		return s.interactionError("Request ID was not sent."), nil
+	}
+
+	tx := middleware.TxFromContext(ctx)
+
+	reqID := args[0]
+	wr, err := models.Whitelists(qm.Where("id = ?", reqID)).One(ctx, tx)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return s.interactionError("Request does not exist"), nil
+		}
+
+		ctxlog.Error(ctx, "error querying request", zap.Error(err))
+		return s.interactionError("Unable to query request."), nil
+	}
+
+	wr.WhitelistStatus = models.WhitelistStatusRejected
+	if err := wr.Update(ctx, tx, boil.Infer()); err != nil {
+		ctxlog.Error(ctx, "unable to update whitelist request", zap.Error(err))
+		return s.interactionError("Unable to update request"), nil
+	}
+
+	user, err := s.fetchDiscordUser(ctx, wr.SF)
+	if err != nil {
+		ctxlog.Error(ctx, "error fetching Discord user", zap.Error(err))
+		return s.interactionError("Unable to fetch user data"), nil
+	}
+
+	e := embuilder.NewEmbed(
+		embuilder.Title("Request Rejected"),
+		embuilder.Field("User", fmt.Sprintf("%s#%s", user.Username, user.Discriminator)),
+		embuilder.Color(14880305),
+	)
+
+	return &sigil.InteractionResponse{
+		Type: sigil.InteractionCallbackTypeUpdateMessage,
+		Data: &sigil.Message{
+			Embeds: []*sigil.Embed{e},
+		},
+	}, nil
 }
