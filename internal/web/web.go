@@ -14,7 +14,6 @@ import (
 	"github.com/holedaemon/web"
 	"github.com/holedaemon/web/middleware"
 	"github.com/jaunty/jaunty/internal/pkg/api/mojang"
-	"github.com/jaunty/jaunty/internal/pkg/redisx"
 	"github.com/jaunty/jaunty/internal/web/templates"
 	"github.com/patrickmn/go-cache"
 	"github.com/willroberts/minecraft-client"
@@ -23,7 +22,7 @@ import (
 )
 
 const (
-	cacheExpir = time.Hour * 24
+	cacheExpir = time.Hour * 1
 )
 
 //go:embed static
@@ -52,7 +51,6 @@ type Options struct {
 	UnapprovedRoleID      string
 
 	DB      *sql.DB
-	Redis   *redisx.Redis
 	RCON    *minecraft.Client
 	OAuth2  *oauth2.Config
 	Discord *beelzebub.Devil
@@ -79,9 +77,8 @@ type Server struct {
 
 	cache *cache.Cache
 
-	rcon  *minecraft.Client
-	db    *sql.DB
-	redis *redisx.Redis
+	rcon *minecraft.Client
+	db   *sql.DB
 }
 
 // New creates a new Server.
@@ -98,8 +95,7 @@ func New(opts *Options) (*Server, error) {
 
 		interactionHandlers: make(map[string]intHandler),
 
-		db:    opts.DB,
-		redis: opts.Redis,
+		db: opts.DB,
 
 		discord: opts.Discord,
 		oauth2:  opts.OAuth2,

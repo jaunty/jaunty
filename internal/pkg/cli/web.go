@@ -7,7 +7,6 @@ import (
 	"github.com/disaccord/beelzebub"
 	"github.com/jaunty/jaunty/internal/pkg/api/mojang"
 	"github.com/jaunty/jaunty/internal/pkg/dbx"
-	"github.com/jaunty/jaunty/internal/pkg/redisx"
 	"github.com/jaunty/jaunty/internal/web"
 	"github.com/willroberts/minecraft-client"
 	"github.com/zikaeroh/ctxlog"
@@ -49,11 +48,6 @@ func (w *Web) Run(ctx context.Context, debug bool) error {
 	l := ctxlog.New(debug)
 	ctx = ctxlog.WithLogger(ctx, l)
 
-	rdb := redisx.Open(w.Redis)
-	if err := rdb.Ping(ctx); err != nil {
-		return err
-	}
-
 	db, err := dbx.Open(ctx, w.DSN)
 	if err != nil {
 		return err
@@ -88,19 +82,11 @@ func (w *Web) Run(ctx context.Context, debug bool) error {
 		return err
 	}
 
-	moj, err := mojang.New(&mojang.Options{
-		Redis: rdb,
-	})
-	if err != nil {
-		return err
-	}
-
 	opts := &web.Options{
 		Addr:                  w.Addr,
 		SessionKey:            []byte(w.SessionKey),
 		PublicKey:             w.PublicKey,
 		DB:                    db,
-		Redis:                 rdb,
 		MaxRequests:           w.MaxRequests,
 		GuildID:               w.GuildID,
 		WhitelistChannelID:    w.WhitelistChannelID,
@@ -110,7 +96,7 @@ func (w *Web) Run(ctx context.Context, debug bool) error {
 		RCON:    rcon,
 		Discord: dsc,
 		OAuth2:  oa,
-		Mojang:  moj,
+		Mojang:  mojang.New(),
 	}
 
 	srv, err := web.New(opts)

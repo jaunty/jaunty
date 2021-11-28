@@ -13,7 +13,6 @@ import (
 
 	"github.com/disaccord/beelzebub/flies/guild"
 	"github.com/disaccord/sigil"
-	"github.com/go-redis/redis/v8"
 	"github.com/gofrs/uuid"
 	"github.com/holedaemon/web/middleware"
 	"github.com/jaunty/jaunty/internal/database/models"
@@ -55,7 +54,7 @@ func (s *Server) postJoin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	uid, err := s.mojang.FetchUUIDByUsername(ctx, un)
+	uid, err := s.fetchMojangUUIDByUsername(ctx, un)
 	if err != nil {
 		if errors.Is(err, mojang.ErrNotFound) {
 			s.serveError(w, r, "Username does not exist according to Mojang")
@@ -136,7 +135,7 @@ func (s *Server) dashboard(w http.ResponseWriter, r *http.Request) {
 
 	names := make(map[string]string)
 	for _, wr := range wr {
-		name, err := s.mojang.FetchUsernameByUUID(ctx, wr.UUID)
+		name, err := s.fetchMojangUsernameByUUID(ctx, wr.UUID)
 		if err != nil {
 			ctxlog.Error(ctx, "error getting username by uuid", zap.Error(err))
 			s.serveError(w, r, "Error getting username by UUID.")
@@ -305,8 +304,8 @@ func (s *Server) authDiscord(w http.ResponseWriter, r *http.Request) {
 		redir = "/"
 	}
 
-	if err := s.redis.SetStringWithExpiration(ctx, state, redir, authTimeout); err != nil {
-		ctxlog.Error(ctx, "error setting state in redis", zap.Error(err))
+	if err := s.cache.Add(state, redir, authTimeout); err != nil {
+		ctxlog.Error(ctx, "error setting state in cache", zap.Error(err))
 		s.serveError(w, r, "Error caching state")
 		return
 	}
@@ -324,16 +323,15 @@ func (s *Server) authDiscordCallback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err := s.redis.FetchString(ctx, state)
-	if err != nil {
-		if errors.Is(err, redis.Nil) {
-			s.serveError(w, r, "Given state does not match")
-			return
-		}
-
-		ctxlog.Error(ctx, "error getting state from redis", zap.Error(err))
-		s.serveError(w, r, "Unable to retrieve state from Redis")
+	redirect, ok := s.cache.Get(state)
+	if !ok {
+		s.serveError(w, r, "State does not match")
 		return
+	}
+
+	redir, ok := redirect.(string)
+	if !ok {
+		panic("redirect string is not a string???")
 	}
 
 	token, err := s.oauth2.Exchange(ctx, r.FormValue("code"))
@@ -409,7 +407,7 @@ func (s *Server) authDiscordCallback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, "/", http.StatusSeeOther)
+	http.Redirect(w, r, redir, http.StatusSeeOther)
 }
 
 func (s *Server) destroyAuth(w http.ResponseWriter, r *http.Request) {
