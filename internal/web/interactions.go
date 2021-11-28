@@ -113,6 +113,11 @@ func (s *Server) handlerRejectWhitelist(ctx context.Context, i *sigil.Interactio
 		embuilder.Color(14880305),
 	)
 
+	g := s.discord.Guild(s.guildID)
+	if err := g.RemoveMember(ctx, user.ID, "Rejected request"); err != nil {
+		return s.interactionError("Unable to kick member."), nil
+	}
+
 	return &sigil.InteractionResponse{
 		Type: sigil.InteractionCallbackTypeUpdateMessage,
 		Data: &sigil.Message{

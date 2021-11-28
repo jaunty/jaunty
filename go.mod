@@ -5,7 +5,6 @@ go 1.17
 require (
 	github.com/alecthomas/kong v0.2.18-0.20211015044717-749d3f0752b5
 	github.com/disaccord/beelzebub v0.0.0-20211119133058-55dac44ba358
-	github.com/disaccord/behemoth v0.0.0-20211127010926-61e6686c893d
 	github.com/disaccord/sigil v0.0.0-20211122044956-2f98257dcca3
 	github.com/friendsofgo/errors v0.9.2
 	github.com/go-chi/chi/v5 v5.0.5
@@ -16,6 +15,7 @@ require (
 	github.com/holedaemon/web v0.0.0-20211117195724-ad5a18de995a
 	github.com/jackc/pgx/v4 v4.13.0
 	github.com/joho/godotenv v1.4.0
+	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/valyala/quicktemplate v1.7.0
 	github.com/volatiletech/sqlboiler/v4 v4.7.1
 	github.com/volatiletech/strmangle v0.0.1
@@ -42,7 +42,6 @@ require (
 	github.com/jackc/pgproto3/v2 v2.1.1 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20200714003250-2b9c44734f2b // indirect
 	github.com/jackc/pgtype v1.8.1 // indirect
-	github.com/patrickmn/go-cache v2.1.0+incompatible // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/rs/xid v1.3.0 // indirect
 	github.com/spf13/cast v1.4.1 // indirect

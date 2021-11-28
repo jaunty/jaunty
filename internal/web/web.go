@@ -68,6 +68,7 @@ type Server struct {
 	guildID               string
 	whitelistChannelID    string
 	notificationChannelID string
+	unapprovedRoleID      string
 
 	interactionHandlers map[string]intHandler
 
@@ -93,6 +94,7 @@ func New(opts *Options) (*Server, error) {
 		whitelistChannelID:    opts.WhitelistChannelID,
 		notificationChannelID: opts.NotificationChannelID,
 		guildID:               opts.GuildID,
+		unapprovedRoleID:      opts.UnapprovedRoleID,
 
 		interactionHandlers: make(map[string]intHandler),
 

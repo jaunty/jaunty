@@ -353,6 +353,7 @@ func (s *Server) authDiscordCallback(w http.ResponseWriter, r *http.Request) {
 
 	gf := s.discord.Guild(s.guildID)
 	_, err = gf.AddMember(ctx, user.ID, &guild.AddMemberOptions{
+		Roles:       []string{s.unapprovedRoleID},
 		AccessToken: token.AccessToken,
 	})
 	if err != nil {
