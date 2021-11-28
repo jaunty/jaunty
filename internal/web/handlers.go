@@ -2,14 +2,17 @@ package web
 
 import (
 	"database/sql"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/disaccord/beelzebub/flies/guild"
+	"github.com/disaccord/sigil"
 	"github.com/go-redis/redis/v8"
 	"github.com/gofrs/uuid"
 	"github.com/holedaemon/web/middleware"
@@ -415,4 +418,56 @@ func (s *Server) destroyAuth(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
+func (s *Server) postWebhook(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	if !s.verifyInteraction(r) {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	var data *sigil.Interaction
+	if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
+		ctxlog.Error(ctx, "error parsing json from discord", zap.Error(err))
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	switch data.Type {
+	case sigil.InteractionTypeMessageComponent:
+	case sigil.InteractionTypePing:
+		res := &sigil.InteractionResponse{
+			Type: sigil.InteractionCallbackTypePong,
+		}
+
+		respondJSON(ctx, w, res)
+		return
+	default:
+		ctxlog.Warn(ctx, "unhandled interaction type sent by Discord")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	id := data.Data.CustomID
+	splits := strings.Split(id, ":")
+
+	h, ok := s.interactionHandlers[splits[0]]
+	if !ok {
+		ctxlog.Warn(ctx, "received interaction with no handler")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	args := splits[0:]
+
+	res, err := h(ctx, data, args...)
+	if err != nil {
+		ctxlog.Error(ctx, "fatal error occurred during interaction handler", zap.Error(err))
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	respondJSON(ctx, w, res)
 }

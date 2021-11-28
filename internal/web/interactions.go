@@ -2,37 +2,61 @@ package web
 
 import (
 	"context"
-	"fmt"
+	"database/sql"
+	"errors"
 
 	"github.com/disaccord/sigil"
+	"github.com/disaccord/sigil/embuilder"
 	"github.com/holedaemon/web/middleware"
 	"github.com/jaunty/jaunty/internal/database/models"
+	"github.com/volatiletech/sqlboiler/v4/boil"
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
 	"github.com/zikaeroh/ctxlog"
 	"go.uber.org/zap"
 )
 
-func (s *Server) ApproveWhitelistHook(ctx context.Context, i *sigil.Interaction) (*sigil.InteractionResponse, error) {
+type intHandler func(context.Context, *sigil.Interaction, ...string) (*sigil.InteractionResponse, error)
+
+func (s *Server) interactionError(msg string) *sigil.InteractionResponse {
+	e := embuilder.NewEmbed(
+		embuilder.Title("Uh Oh Sisters"),
+		embuilder.Author("Almighty Server"),
+		embuilder.Field("Situation Report", msg),
+		embuilder.Color(14880305),
+	)
+
+	return &sigil.InteractionResponse{
+		Type: sigil.InteractionCallbackTypeUpdateMessage,
+		Data: &sigil.Message{
+			Embeds: []*sigil.Embed{e},
+		},
+	}
+}
+
+func (s *Server) handlerApproveWhitelist(ctx context.Context, i *sigil.Interaction, args ...string) (*sigil.InteractionResponse, error) {
+	if len(args) == 0 {
+		return s.interactionError("Request ID was not sent."), nil
+	}
+
 	tx := middleware.TxFromContext(ctx)
 
-	if i.Member.User.ID == "" {
-		panic("web: ApproveWhitelistHook received a blank member id")
-	}
-
-	sf := i.Member.User.ID
-	fullName := fmt.Sprintf("%s#%s", i.Member.User.Username, i.Member.User.Discriminator)
-
-	count, err := models.Whitelists(qm.Where("sf = ?", sf)).Count(ctx, tx)
+	reqID := args[0]
+	wr, err := models.Whitelists(qm.Where("id = ?", reqID)).One(ctx, tx)
 	if err != nil {
-		ctxlog.Error(ctx, "error counting whitelist requests for sf", zap.Error(err), zap.String("sf", sf))
-		return followupError(ctx, "Unable to count whitelist requests for %s", fullName), nil
+		if errors.Is(err, sql.ErrNoRows) {
+			return s.interactionError("Request does not exist."), nil
+		}
+		ctxlog.Error(ctx, "error querying whitelist request", zap.Error(err))
+		return s.interactionError("Unable to query whitelist"), nil
 	}
 
-	if count == 0 {
-		return followupError(ctx, "%s does not have a whitelist request in the database.", fullName), nil
+	wr.WhitelistStatus = models.WhitelistStatusApproved
+	if err := wr.Update(ctx, tx, boil.Infer()); err != nil {
+		ctxlog.Error(ctx, "error updating request", zap.Error(err))
+		return s.interactionError("Unable to update request"), nil
 	}
 
-	if count > 1 {
-
-	}
+	e := embuilder.NewEmbed(
+		embuilder.
+	)
 }

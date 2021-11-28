@@ -9,8 +9,6 @@ import (
 	"time"
 
 	"github.com/disaccord/beelzebub"
-	"github.com/disaccord/behemoth"
-	"github.com/disaccord/sigil"
 	"github.com/go-chi/chi/v5"
 	"github.com/gorilla/sessions"
 	"github.com/holedaemon/web"
@@ -65,16 +63,18 @@ type Options struct {
 type Server struct {
 	addr        string
 	maxRequests int
+	publicKey   string
 
 	guildID               string
 	whitelistChannelID    string
 	notificationChannelID string
 
-	store        sessions.Store
-	interactions *behemoth.Beast
-	discord      *beelzebub.Devil
-	oauth2       *oauth2.Config
-	mojang       *mojang.Client
+	interactionHandlers map[string]intHandler
+
+	store   sessions.Store
+	discord *beelzebub.Devil
+	oauth2  *oauth2.Config
+	mojang  *mojang.Client
 
 	cache *cache.Cache
 
@@ -88,10 +88,13 @@ func New(opts *Options) (*Server, error) {
 	s := &Server{
 		addr:        opts.Addr,
 		maxRequests: opts.MaxRequests,
+		publicKey:   opts.PublicKey,
 
 		whitelistChannelID:    opts.WhitelistChannelID,
 		notificationChannelID: opts.NotificationChannelID,
 		guildID:               opts.GuildID,
+
+		interactionHandlers: make(map[string]intHandler),
 
 		db:    opts.DB,
 		redis: opts.Redis,
@@ -104,18 +107,6 @@ func New(opts *Options) (*Server, error) {
 
 		store: sessions.NewCookieStore(opts.SessionKey),
 	}
-
-	b, err := behemoth.New(&behemoth.Options{
-		PublicKey: opts.PublicKey,
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	b.AddHandler(sigil.InteractionTypeMessageComponent, "whitelist-approve", s.ApproveWhitelistHook)
-	b.AddHandler(sigil.InteractionTypeMessageComponent, "whitelist-reject", s.RejectWhitelistHook)
-
-	s.interactions = b
 
 	return s, nil
 }
@@ -150,7 +141,7 @@ func (s *Server) router(ctx context.Context) *chi.Mux {
 	r.Get("/auth/callback", s.authDiscordCallback)
 	r.Get("/auth/destroy", s.destroyAuth)
 	r.Get("/logout", s.destroyAuth)
-	r.Post("/webhook", s.interactions.HandleWebhook)
+	r.Post("/webhook", s.postWebhook)
 
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
 		templates.WritePageTemplate(w, &templates.ErrorPage{

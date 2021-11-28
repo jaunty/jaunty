@@ -95,6 +95,10 @@ github.com/disaccord/beelzebub v0.0.0-20211119133058-55dac44ba358 h1:UeWCKF0T+I9
 github.com/disaccord/beelzebub v0.0.0-20211119133058-55dac44ba358/go.mod h1:lzqUCavP3fxH6yTgu0Vx3JLVV/8p5Aed7Gm5BZWApaI=
 github.com/disaccord/behemoth v0.0.0-20211120210425-ef0d415d1f69 h1:L/91b8If3eRLm2EAJOuM5iEEgLfhsa0kRsvJSCb0NPI=
 github.com/disaccord/behemoth v0.0.0-20211120210425-ef0d415d1f69/go.mod h1:TOvUH5ydUJNT1rCkGIWhQkPc8HAZHnqYYELr0OJWOT4=
+github.com/disaccord/behemoth v0.0.0-20211127002216-935639934412 h1:YnpNOcDt5x8V3828+35KLFRXNNCNOdMEzyezOFvzFHg=
+github.com/disaccord/behemoth v0.0.0-20211127002216-935639934412/go.mod h1:TOvUH5ydUJNT1rCkGIWhQkPc8HAZHnqYYELr0OJWOT4=
+github.com/disaccord/behemoth v0.0.0-20211127010926-61e6686c893d h1:LGmQWMsjo/dP8mm9WGd2OTsrG3snQ4s01v8N7Sbl6bY=
+github.com/disaccord/behemoth v0.0.0-20211127010926-61e6686c893d/go.mod h1:TOvUH5ydUJNT1rCkGIWhQkPc8HAZHnqYYELr0OJWOT4=
 github.com/disaccord/null v0.0.0-20211114195643-53cc2c947855 h1:1iQJBNZCco5TjaR39qxMuG2dgXZPwafyd2ztQrtsHCI=
 github.com/disaccord/null v0.0.0-20211114195643-53cc2c947855/go.mod h1:nB+QZ1VN7Br6iTD8xr10XvE75E8AK3zjEYRGrYgKADY=
 github.com/disaccord/rate v0.0.0-20211107001806-d2b4e3962140 h1:icHGOinXBF6ACDHYXDEdyiIm8bg7N9I4hUvpadNDu9U=
