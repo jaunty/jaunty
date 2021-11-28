@@ -24,9 +24,8 @@ type Web struct {
 	SessionKey string `help:"Secret key for session encryption." required:"" env:"JAUNTY_SESSION_KEY"`
 	PublicKey  string `help:"Discord application's public key." required:"" env:"JAUNTY_DISCORD_PUBLIC_KEY"`
 
-	DSN   string `help:"PostgreSQL DSN." required:"" env:"JAUNTY_DB_DSN"`
-	Redis string `help:"Address to Redis server." required:"" env:"JAUNTY_REDIS_ADDR"`
-	RCON  string `help:"Address to RCON server." required:"" env:"JAUNTY_RCON_ADDR"`
+	DSN  string `help:"PostgreSQL DSN." required:"" env:"JAUNTY_DB_DSN"`
+	RCON string `help:"Address to RCON server." required:"" env:"JAUNTY_RCON_ADDR"`
 
 	GuildID               string `help:"Guild ID for the associated Discord" required:"" env:"JAUNTY_GUILD_ID"`
 	WhitelistChannelID    string `help:"Channel ID for the whitelist notifications channel" required:"" env:"JAUNTY_WHITELIST_CHANNEL_ID"`
