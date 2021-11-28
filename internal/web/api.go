@@ -16,8 +16,7 @@ func (s *Server) fetchDiscordUser(ctx context.Context, sf string) (*sigil.User, 
 		}
 	}
 
-	ur := s.discord.User()
-	u, err := ur.Get(ctx)
+	u, err := s.discord.GetUser(ctx, sf)
 	if err != nil {
 		return nil, err
 	}

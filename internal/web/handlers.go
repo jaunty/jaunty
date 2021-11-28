@@ -111,7 +111,7 @@ func (s *Server) postJoin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := s.SendWhitelistNotification(ctx, sess.getUsername(), un); err != nil {
+	if err := s.SendWhitelistNotification(ctx, wh, sess.getUsername(), un); err != nil {
 		ctxlog.Error(ctx, "error sending notification to channel", zap.Error(err))
 	}
 
@@ -459,7 +459,7 @@ func (s *Server) postWebhook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	args := splits[0:]
+	args := splits[1:]
 
 	res, err := h(ctx, data, args...)
 	if err != nil {

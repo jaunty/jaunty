@@ -1,0 +1,4 @@
+Auth redirect doesn't work correctly
+Unapproved role isn't being applied
+Dashboard requests list looks bad
+Dashboard requests list doesn't update

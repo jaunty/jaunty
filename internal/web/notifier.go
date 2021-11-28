@@ -2,12 +2,14 @@ package web
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/disaccord/beelzebub/flies/channel"
 	"github.com/disaccord/sigil"
 	"github.com/disaccord/sigil/cmbuilder"
 	"github.com/disaccord/sigil/embuilder"
+	"github.com/jaunty/jaunty/internal/database/models"
 )
 
 func (s *Server) SendSiteNotification(ctx context.Context, field ...string) error {
@@ -16,15 +18,18 @@ func (s *Server) SendSiteNotification(ctx context.Context, field ...string) erro
 	}
 
 	fields := make([]*sigil.EmbedField, 0, len(field))
+	skip := false
 	for i, f := range field {
-		if i == len(field)+1 {
-			break
+		if skip {
+			skip = false
+			continue
 		}
 
 		fields = append(fields, &sigil.EmbedField{
 			Name:  f,
 			Value: field[i+1],
 		})
+		skip = true
 	}
 
 	e := embuilder.NewEmbed(
@@ -42,7 +47,7 @@ func (s *Server) SendSiteNotification(ctx context.Context, field ...string) erro
 	return err
 }
 
-func (s *Server) SendWhitelistNotification(ctx context.Context, du, mcu string) error {
+func (s *Server) SendWhitelistNotification(ctx context.Context, wh models.Whitelist, du, mcu string) error {
 	e := embuilder.NewEmbed(
 		embuilder.Title("Whitelist Request"),
 		embuilder.Color(15556558),
@@ -54,14 +59,14 @@ func (s *Server) SendWhitelistNotification(ctx context.Context, du, mcu string) 
 	row := cmbuilder.NewActionRow(
 		cmbuilder.Buttons(
 			cmbuilder.NewButton(
-				cmbuilder.CustomButtonID("whitelist-request-approve"),
+				cmbuilder.CustomButtonID(fmt.Sprintf("whitelist-approve:%d", wh.ID)),
 				cmbuilder.Style(sigil.ButtonStyleSuccess),
 				cmbuilder.Label("Approve"),
 			),
 			cmbuilder.NewButton(
-				cmbuilder.CustomButtonID("whitelist-request-deny"),
+				cmbuilder.CustomButtonID(fmt.Sprintf("whitelist-reject:%d", wh.ID)),
 				cmbuilder.Style(sigil.ButtonStyleDanger),
-				cmbuilder.Label("Deny"),
+				cmbuilder.Label("Reject"),
 			),
 		),
 	)
