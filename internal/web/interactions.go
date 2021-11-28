@@ -57,6 +57,11 @@ func (s *Server) handlerApproveWhitelist(ctx context.Context, i *sigil.Interacti
 		return s.interactionError("Unable to update request"), nil
 	}
 
+	if err := tx.Commit(); err != nil {
+		ctxlog.Error(ctx, "error committing transaction", zap.Error(err))
+		return s.interactionError("Unable to commit transaction"), nil
+	}
+
 	user, err := s.fetchDiscordUser(ctx, wr.SF)
 	if err != nil {
 		ctxlog.Error(ctx, "error fetching user", zap.Error(err))
@@ -99,6 +104,11 @@ func (s *Server) handlerRejectWhitelist(ctx context.Context, i *sigil.Interactio
 	if err := wr.Update(ctx, tx, boil.Infer()); err != nil {
 		ctxlog.Error(ctx, "unable to update whitelist request", zap.Error(err))
 		return s.interactionError("Unable to update request"), nil
+	}
+
+	if err := tx.Commit(); err != nil {
+		ctxlog.Error(ctx, "error committing transaction", zap.Error(err))
+		return s.interactionError("Unable to commit transaction"), nil
 	}
 
 	user, err := s.fetchDiscordUser(ctx, wr.SF)

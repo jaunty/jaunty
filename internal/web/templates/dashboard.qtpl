@@ -58,7 +58,7 @@
     {% if len(p.Requests) > 0 %}
         <div class="columns">
             {% for _, wr := range p.Requests %}
-                <div class="column is-narrow box">
+                <div class="column is-narrow box mr-3">
                     <a class="delete is-pulled-right" href="/dashboard/request/cancel?id={%dl wr.ID %}"></a>
                     <ul class="is-size-5 mb-1">
                         <li>{%s p.ResolvedUUIDs[wr.UUID] %}</li>
