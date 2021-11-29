@@ -12,6 +12,15 @@
 <html>
     <head>
         <title>{%= p.Title() %} &bull; Jaunty</title>
+        <link rel="apple-touch-icon" sizes="180x180" href="https://jaunty.fun/static/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="https://jaunty.fun/static/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="https://jaunty.fun/static/favicon-16x16.png">
+        <link rel="manifest" href="https://jaunty.fun/static/site.webmanifest">
+        <link rel="mask-icon" href="https://jaunty.fun/static/safari-pinned-tab.svg" color="#5bbad5">
+        <link rel="shortcut icon" href="https://jaunty.fun/static/favicon.ico">
+        <meta name="msapplication-TileColor" content="#da532c">
+        <meta name="msapplication-config" content="https://jaunty.fun/static/browserconfig.xml">
+        <meta name="theme-color" content="#ffffff">
 
         <link rel="stylesheet" href="/static/jaunty.css">
 
