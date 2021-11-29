@@ -5,7 +5,7 @@ go 1.17
 require (
 	github.com/alecthomas/kong v0.2.18-0.20211015044717-749d3f0752b5
 	github.com/disaccord/beelzebub v0.0.0-20211119133058-55dac44ba358
-	github.com/disaccord/sigil v0.0.0-20211122044956-2f98257dcca3
+	github.com/disaccord/sigil v0.0.0-20211129013637-e895ba0d1018
 	github.com/friendsofgo/errors v0.9.2
 	github.com/go-chi/chi/v5 v5.0.5
 	github.com/gofrs/uuid v4.0.0+incompatible
