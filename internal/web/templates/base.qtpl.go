@@ -26,6 +26,12 @@ type Page interface {
 //line internal/web/templates/base.qtpl:1
 	WriteTitle(qq422016 qtio422016.Writer)
 //line internal/web/templates/base.qtpl:1
+	URL() string
+//line internal/web/templates/base.qtpl:1
+	StreamURL(qw422016 *qt422016.Writer)
+//line internal/web/templates/base.qtpl:1
+	WriteURL(qq422016 qtio422016.Writer)
+//line internal/web/templates/base.qtpl:1
 	Meta() string
 //line internal/web/templates/base.qtpl:1
 	StreamMeta(qw422016 *qt422016.Writer)
@@ -52,32 +58,65 @@ type Page interface {
 //line internal/web/templates/base.qtpl:1
 }
 
-//line internal/web/templates/base.qtpl:10
+//line internal/web/templates/base.qtpl:11
 func StreamPageTemplate(qw422016 *qt422016.Writer, p Page) {
-//line internal/web/templates/base.qtpl:10
+//line internal/web/templates/base.qtpl:11
 	qw422016.N().S(`
 <!DOCTYPE html>
 <html>
     <head>
         <title>`)
-//line internal/web/templates/base.qtpl:14
+//line internal/web/templates/base.qtpl:15
 	p.StreamTitle(qw422016)
-//line internal/web/templates/base.qtpl:14
+//line internal/web/templates/base.qtpl:15
 	qw422016.N().S(` &bull; Jaunty</title>
+
+        <meta property="og:title" content="`)
+//line internal/web/templates/base.qtpl:17
+	p.StreamTitle(qw422016)
+//line internal/web/templates/base.qtpl:17
+	qw422016.N().S(` &bull; Jaunty">
+        <meta property="og:type" content="website">
+        <meta property="og:description" content="A web interface for the Jaunty Minecraft community.">
+        <meta property="og:url" content="`)
+//line internal/web/templates/base.qtpl:20
+	qw422016.N().S(p.URL())
+//line internal/web/templates/base.qtpl:20
+	qw422016.N().S(`">
+        <meta property="og:image" content="https://jaunty.fun/static/image.png">
+
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:creator" content="@holedaemon">
+        <meta name="twitter:title" content="`)
+//line internal/web/templates/base.qtpl:25
+	p.StreamTitle(qw422016)
+//line internal/web/templates/base.qtpl:25
+	qw422016.N().S(` &bull; Jaunty">
+        <meta name="twitter:description" content="A web interface for the Jaunty Minecraft community.">
+
+        <link rel="apple-touch-icon" sizes="180x180" href="https://jaunty.fun/static/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="https://jaunty.fun/static/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="https://jaunty.fun/static/favicon-16x16.png">
+        <link rel="manifest" href="https://jaunty.fun/static/site.webmanifest">
+        <link rel="mask-icon" href="https://jaunty.fun/static/safari-pinned-tab.svg" color="#5bbad5">
+        <link rel="shortcut icon" href="https://jaunty.fun/static/favicon.ico">
+        <meta name="msapplication-TileColor" content="#da532c">
+        <meta name="msapplication-config" content="https://jaunty.fun/static/browserconfig.xml">
+        <meta name="theme-color" content="#ffffff">
 
         <link rel="stylesheet" href="/static/jaunty.css">
 
         `)
-//line internal/web/templates/base.qtpl:18
+//line internal/web/templates/base.qtpl:40
 	p.StreamMeta(qw422016)
-//line internal/web/templates/base.qtpl:18
+//line internal/web/templates/base.qtpl:40
 	qw422016.N().S(`
     </head>
     <body>
         <nav class="navbar is-jaunty `)
-//line internal/web/templates/base.qtpl:21
+//line internal/web/templates/base.qtpl:43
 	p.StreamNavbarMargin(qw422016)
-//line internal/web/templates/base.qtpl:21
+//line internal/web/templates/base.qtpl:43
 	qw422016.N().S(`">
             <div class="container">
                 <div class="navbar-brand is-size-5">
@@ -99,9 +138,9 @@ func StreamPageTemplate(qw422016 *qt422016.Writer, p Page) {
 
                     <div class="navbar-end">
                         `)
-//line internal/web/templates/base.qtpl:41
+//line internal/web/templates/base.qtpl:63
 	p.StreamNavbarLogin(qw422016)
-//line internal/web/templates/base.qtpl:41
+//line internal/web/templates/base.qtpl:63
 	qw422016.N().S(`
                     </div>
                 </div>
@@ -109,107 +148,108 @@ func StreamPageTemplate(qw422016 *qt422016.Writer, p Page) {
         </nav>
 
         `)
-//line internal/web/templates/base.qtpl:47
+//line internal/web/templates/base.qtpl:69
 	p.StreamBody(qw422016)
-//line internal/web/templates/base.qtpl:47
+//line internal/web/templates/base.qtpl:69
 	qw422016.N().S(`
     </body>
 </html>
 `)
-//line internal/web/templates/base.qtpl:50
+//line internal/web/templates/base.qtpl:72
 }
 
-//line internal/web/templates/base.qtpl:50
+//line internal/web/templates/base.qtpl:72
 func WritePageTemplate(qq422016 qtio422016.Writer, p Page) {
-//line internal/web/templates/base.qtpl:50
+//line internal/web/templates/base.qtpl:72
 	qw422016 := qt422016.AcquireWriter(qq422016)
-//line internal/web/templates/base.qtpl:50
+//line internal/web/templates/base.qtpl:72
 	StreamPageTemplate(qw422016, p)
-//line internal/web/templates/base.qtpl:50
+//line internal/web/templates/base.qtpl:72
 	qt422016.ReleaseWriter(qw422016)
-//line internal/web/templates/base.qtpl:50
+//line internal/web/templates/base.qtpl:72
 }
 
-//line internal/web/templates/base.qtpl:50
+//line internal/web/templates/base.qtpl:72
 func PageTemplate(p Page) string {
-//line internal/web/templates/base.qtpl:50
+//line internal/web/templates/base.qtpl:72
 	qb422016 := qt422016.AcquireByteBuffer()
-//line internal/web/templates/base.qtpl:50
+//line internal/web/templates/base.qtpl:72
 	WritePageTemplate(qb422016, p)
-//line internal/web/templates/base.qtpl:50
+//line internal/web/templates/base.qtpl:72
 	qs422016 := string(qb422016.B)
-//line internal/web/templates/base.qtpl:50
+//line internal/web/templates/base.qtpl:72
 	qt422016.ReleaseByteBuffer(qb422016)
-//line internal/web/templates/base.qtpl:50
+//line internal/web/templates/base.qtpl:72
 	return qs422016
-//line internal/web/templates/base.qtpl:50
+//line internal/web/templates/base.qtpl:72
 }
 
-//line internal/web/templates/base.qtpl:52
+//line internal/web/templates/base.qtpl:74
 type User struct {
 	Username  string
 	Snowflake string
 	Avatar    string
 }
 
-//line internal/web/templates/base.qtpl:59
+//line internal/web/templates/base.qtpl:81
 type BasePage struct {
+	Path string
 	User *User
 }
 
-//line internal/web/templates/base.qtpl:62
+//line internal/web/templates/base.qtpl:85
 func (p *BasePage) StreamTitle(qw422016 *qt422016.Writer) {
-//line internal/web/templates/base.qtpl:62
+//line internal/web/templates/base.qtpl:85
 	qw422016.N().S(`Jaunty`)
-//line internal/web/templates/base.qtpl:62
+//line internal/web/templates/base.qtpl:85
 }
 
-//line internal/web/templates/base.qtpl:62
+//line internal/web/templates/base.qtpl:85
 func (p *BasePage) WriteTitle(qq422016 qtio422016.Writer) {
-//line internal/web/templates/base.qtpl:62
+//line internal/web/templates/base.qtpl:85
 	qw422016 := qt422016.AcquireWriter(qq422016)
-//line internal/web/templates/base.qtpl:62
+//line internal/web/templates/base.qtpl:85
 	p.StreamTitle(qw422016)
-//line internal/web/templates/base.qtpl:62
+//line internal/web/templates/base.qtpl:85
 	qt422016.ReleaseWriter(qw422016)
-//line internal/web/templates/base.qtpl:62
+//line internal/web/templates/base.qtpl:85
 }
 
-//line internal/web/templates/base.qtpl:62
+//line internal/web/templates/base.qtpl:85
 func (p *BasePage) Title() string {
-//line internal/web/templates/base.qtpl:62
+//line internal/web/templates/base.qtpl:85
 	qb422016 := qt422016.AcquireByteBuffer()
-//line internal/web/templates/base.qtpl:62
+//line internal/web/templates/base.qtpl:85
 	p.WriteTitle(qb422016)
-//line internal/web/templates/base.qtpl:62
+//line internal/web/templates/base.qtpl:85
 	qs422016 := string(qb422016.B)
-//line internal/web/templates/base.qtpl:62
+//line internal/web/templates/base.qtpl:85
 	qt422016.ReleaseByteBuffer(qb422016)
-//line internal/web/templates/base.qtpl:62
+//line internal/web/templates/base.qtpl:85
 	return qs422016
-//line internal/web/templates/base.qtpl:62
+//line internal/web/templates/base.qtpl:85
 }
 
-//line internal/web/templates/base.qtpl:63
+//line internal/web/templates/base.qtpl:86
 func (p *BasePage) StreamNavbarLogin(qw422016 *qt422016.Writer) {
-//line internal/web/templates/base.qtpl:63
+//line internal/web/templates/base.qtpl:86
 	qw422016.N().S(`
     `)
-//line internal/web/templates/base.qtpl:64
+//line internal/web/templates/base.qtpl:87
 	if p.User == nil {
-//line internal/web/templates/base.qtpl:64
+//line internal/web/templates/base.qtpl:87
 		qw422016.N().S(`
         <a class="navbar-item" href="/login">Log in</a>
     `)
-//line internal/web/templates/base.qtpl:66
+//line internal/web/templates/base.qtpl:89
 	} else {
-//line internal/web/templates/base.qtpl:66
+//line internal/web/templates/base.qtpl:89
 		qw422016.N().S(`
         <div class="navbar-item has-dropdown is-hoverable">
             <a class="navbar-link">`)
-//line internal/web/templates/base.qtpl:68
+//line internal/web/templates/base.qtpl:91
 		qw422016.E().S(p.User.Username)
-//line internal/web/templates/base.qtpl:68
+//line internal/web/templates/base.qtpl:91
 		qw422016.N().S(`</a>
 
             <div class="navbar-dropdown">
@@ -223,133 +263,172 @@ func (p *BasePage) StreamNavbarLogin(qw422016 *qt422016.Writer) {
             </div>
         </div>
     `)
-//line internal/web/templates/base.qtpl:80
+//line internal/web/templates/base.qtpl:103
 	}
-//line internal/web/templates/base.qtpl:80
+//line internal/web/templates/base.qtpl:103
 	qw422016.N().S(`
 `)
-//line internal/web/templates/base.qtpl:81
+//line internal/web/templates/base.qtpl:104
 }
 
-//line internal/web/templates/base.qtpl:81
+//line internal/web/templates/base.qtpl:104
 func (p *BasePage) WriteNavbarLogin(qq422016 qtio422016.Writer) {
-//line internal/web/templates/base.qtpl:81
+//line internal/web/templates/base.qtpl:104
 	qw422016 := qt422016.AcquireWriter(qq422016)
-//line internal/web/templates/base.qtpl:81
+//line internal/web/templates/base.qtpl:104
 	p.StreamNavbarLogin(qw422016)
-//line internal/web/templates/base.qtpl:81
+//line internal/web/templates/base.qtpl:104
 	qt422016.ReleaseWriter(qw422016)
-//line internal/web/templates/base.qtpl:81
+//line internal/web/templates/base.qtpl:104
 }
 
-//line internal/web/templates/base.qtpl:81
+//line internal/web/templates/base.qtpl:104
 func (p *BasePage) NavbarLogin() string {
-//line internal/web/templates/base.qtpl:81
+//line internal/web/templates/base.qtpl:104
 	qb422016 := qt422016.AcquireByteBuffer()
-//line internal/web/templates/base.qtpl:81
+//line internal/web/templates/base.qtpl:104
 	p.WriteNavbarLogin(qb422016)
-//line internal/web/templates/base.qtpl:81
+//line internal/web/templates/base.qtpl:104
 	qs422016 := string(qb422016.B)
-//line internal/web/templates/base.qtpl:81
+//line internal/web/templates/base.qtpl:104
 	qt422016.ReleaseByteBuffer(qb422016)
-//line internal/web/templates/base.qtpl:81
+//line internal/web/templates/base.qtpl:104
 	return qs422016
-//line internal/web/templates/base.qtpl:81
+//line internal/web/templates/base.qtpl:104
 }
 
-//line internal/web/templates/base.qtpl:83
+//line internal/web/templates/base.qtpl:106
 func (p *BasePage) StreamNavbarMargin(qw422016 *qt422016.Writer) {
-//line internal/web/templates/base.qtpl:83
+//line internal/web/templates/base.qtpl:106
 	qw422016.N().S(`
 mb-5
 `)
-//line internal/web/templates/base.qtpl:85
+//line internal/web/templates/base.qtpl:108
 }
 
-//line internal/web/templates/base.qtpl:85
+//line internal/web/templates/base.qtpl:108
 func (p *BasePage) WriteNavbarMargin(qq422016 qtio422016.Writer) {
-//line internal/web/templates/base.qtpl:85
+//line internal/web/templates/base.qtpl:108
 	qw422016 := qt422016.AcquireWriter(qq422016)
-//line internal/web/templates/base.qtpl:85
+//line internal/web/templates/base.qtpl:108
 	p.StreamNavbarMargin(qw422016)
-//line internal/web/templates/base.qtpl:85
+//line internal/web/templates/base.qtpl:108
 	qt422016.ReleaseWriter(qw422016)
-//line internal/web/templates/base.qtpl:85
+//line internal/web/templates/base.qtpl:108
 }
 
-//line internal/web/templates/base.qtpl:85
+//line internal/web/templates/base.qtpl:108
 func (p *BasePage) NavbarMargin() string {
-//line internal/web/templates/base.qtpl:85
+//line internal/web/templates/base.qtpl:108
 	qb422016 := qt422016.AcquireByteBuffer()
-//line internal/web/templates/base.qtpl:85
+//line internal/web/templates/base.qtpl:108
 	p.WriteNavbarMargin(qb422016)
-//line internal/web/templates/base.qtpl:85
+//line internal/web/templates/base.qtpl:108
 	qs422016 := string(qb422016.B)
-//line internal/web/templates/base.qtpl:85
+//line internal/web/templates/base.qtpl:108
 	qt422016.ReleaseByteBuffer(qb422016)
-//line internal/web/templates/base.qtpl:85
+//line internal/web/templates/base.qtpl:108
 	return qs422016
-//line internal/web/templates/base.qtpl:85
+//line internal/web/templates/base.qtpl:108
 }
 
-//line internal/web/templates/base.qtpl:87
+//line internal/web/templates/base.qtpl:110
+func (p *BasePage) StreamURL(qw422016 *qt422016.Writer) {
+//line internal/web/templates/base.qtpl:110
+	qw422016.N().S(`
+`)
+//line internal/web/templates/base.qtpl:111
+	qw422016.E().S(p.Path)
+//line internal/web/templates/base.qtpl:111
+	qw422016.N().S(`
+`)
+//line internal/web/templates/base.qtpl:112
+}
+
+//line internal/web/templates/base.qtpl:112
+func (p *BasePage) WriteURL(qq422016 qtio422016.Writer) {
+//line internal/web/templates/base.qtpl:112
+	qw422016 := qt422016.AcquireWriter(qq422016)
+//line internal/web/templates/base.qtpl:112
+	p.StreamURL(qw422016)
+//line internal/web/templates/base.qtpl:112
+	qt422016.ReleaseWriter(qw422016)
+//line internal/web/templates/base.qtpl:112
+}
+
+//line internal/web/templates/base.qtpl:112
+func (p *BasePage) URL() string {
+//line internal/web/templates/base.qtpl:112
+	qb422016 := qt422016.AcquireByteBuffer()
+//line internal/web/templates/base.qtpl:112
+	p.WriteURL(qb422016)
+//line internal/web/templates/base.qtpl:112
+	qs422016 := string(qb422016.B)
+//line internal/web/templates/base.qtpl:112
+	qt422016.ReleaseByteBuffer(qb422016)
+//line internal/web/templates/base.qtpl:112
+	return qs422016
+//line internal/web/templates/base.qtpl:112
+}
+
+//line internal/web/templates/base.qtpl:114
 func (p *BasePage) StreamBody(qw422016 *qt422016.Writer) {
-//line internal/web/templates/base.qtpl:87
+//line internal/web/templates/base.qtpl:114
 }
 
-//line internal/web/templates/base.qtpl:87
+//line internal/web/templates/base.qtpl:114
 func (p *BasePage) WriteBody(qq422016 qtio422016.Writer) {
-//line internal/web/templates/base.qtpl:87
+//line internal/web/templates/base.qtpl:114
 	qw422016 := qt422016.AcquireWriter(qq422016)
-//line internal/web/templates/base.qtpl:87
+//line internal/web/templates/base.qtpl:114
 	p.StreamBody(qw422016)
-//line internal/web/templates/base.qtpl:87
+//line internal/web/templates/base.qtpl:114
 	qt422016.ReleaseWriter(qw422016)
-//line internal/web/templates/base.qtpl:87
+//line internal/web/templates/base.qtpl:114
 }
 
-//line internal/web/templates/base.qtpl:87
+//line internal/web/templates/base.qtpl:114
 func (p *BasePage) Body() string {
-//line internal/web/templates/base.qtpl:87
+//line internal/web/templates/base.qtpl:114
 	qb422016 := qt422016.AcquireByteBuffer()
-//line internal/web/templates/base.qtpl:87
+//line internal/web/templates/base.qtpl:114
 	p.WriteBody(qb422016)
-//line internal/web/templates/base.qtpl:87
+//line internal/web/templates/base.qtpl:114
 	qs422016 := string(qb422016.B)
-//line internal/web/templates/base.qtpl:87
+//line internal/web/templates/base.qtpl:114
 	qt422016.ReleaseByteBuffer(qb422016)
-//line internal/web/templates/base.qtpl:87
+//line internal/web/templates/base.qtpl:114
 	return qs422016
-//line internal/web/templates/base.qtpl:87
+//line internal/web/templates/base.qtpl:114
 }
 
-//line internal/web/templates/base.qtpl:88
+//line internal/web/templates/base.qtpl:115
 func (p *BasePage) StreamMeta(qw422016 *qt422016.Writer) {
-//line internal/web/templates/base.qtpl:88
+//line internal/web/templates/base.qtpl:115
 }
 
-//line internal/web/templates/base.qtpl:88
+//line internal/web/templates/base.qtpl:115
 func (p *BasePage) WriteMeta(qq422016 qtio422016.Writer) {
-//line internal/web/templates/base.qtpl:88
+//line internal/web/templates/base.qtpl:115
 	qw422016 := qt422016.AcquireWriter(qq422016)
-//line internal/web/templates/base.qtpl:88
+//line internal/web/templates/base.qtpl:115
 	p.StreamMeta(qw422016)
-//line internal/web/templates/base.qtpl:88
+//line internal/web/templates/base.qtpl:115
 	qt422016.ReleaseWriter(qw422016)
-//line internal/web/templates/base.qtpl:88
+//line internal/web/templates/base.qtpl:115
 }
 
-//line internal/web/templates/base.qtpl:88
+//line internal/web/templates/base.qtpl:115
 func (p *BasePage) Meta() string {
-//line internal/web/templates/base.qtpl:88
+//line internal/web/templates/base.qtpl:115
 	qb422016 := qt422016.AcquireByteBuffer()
-//line internal/web/templates/base.qtpl:88
+//line internal/web/templates/base.qtpl:115
 	p.WriteMeta(qb422016)
-//line internal/web/templates/base.qtpl:88
+//line internal/web/templates/base.qtpl:115
 	qs422016 := string(qb422016.B)
-//line internal/web/templates/base.qtpl:88
+//line internal/web/templates/base.qtpl:115
 	qt422016.ReleaseByteBuffer(qb422016)
-//line internal/web/templates/base.qtpl:88
+//line internal/web/templates/base.qtpl:115
 	return qs422016
-//line internal/web/templates/base.qtpl:88
+//line internal/web/templates/base.qtpl:115
 }

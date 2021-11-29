@@ -2,13 +2,22 @@ package web
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/jaunty/jaunty/internal/web/templates"
 )
 
 func (s *Server) basePage(r *http.Request) *templates.BasePage {
 	sess := s.getSession(r)
-	bp := new(templates.BasePage)
+
+	pth := r.URL.Path
+	if !strings.HasPrefix(pth, "/") {
+		pth = "/" + pth
+	}
+
+	bp := &templates.BasePage{
+		Path: pth,
+	}
 
 	if !sess.isNew() {
 		bp.User = &templates.User{
