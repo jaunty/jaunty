@@ -32,7 +32,7 @@ type Web struct {
 	GuildID               string `help:"Guild ID for the associated Discord" required:"" env:"JAUNTY_GUILD_ID"`
 	WhitelistChannelID    string `help:"Channel ID for the whitelist notifications channel" required:"" env:"JAUNTY_WHITELIST_CHANNEL_ID"`
 	NotificationChannelID string `help:"Channel ID for generalized site notifications" required:"" env:"JAUNTY_NOTIFICATION_CHANNEL_ID"`
-	UnapprovedRoleID      string `help:"Role ID to add to new members upon join." required:"" env:"JAUNTY_UNAPPROVED_ROLE_ID"`
+	ApprovedRoleID        string `help:"Role to add to members if their request is approved." required:"" env:"JAUNTY_APPROVED_ROLE_ID"`
 
 	MaxRequests int `help:"Maximum whitelist requests per user." default:"2" env:"JAUNTY_MAX_REQUESTS"`
 
@@ -92,7 +92,7 @@ func (w *Web) Run(ctx context.Context, debug bool) error {
 		GuildID:               w.GuildID,
 		WhitelistChannelID:    w.WhitelistChannelID,
 		NotificationChannelID: w.NotificationChannelID,
-		UnapprovedRoleID:      w.UnapprovedRoleID,
+		ApprovedRoleID:        w.ApprovedRoleID,
 
 		RCON:    rc,
 		Discord: dsc,

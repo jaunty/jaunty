@@ -48,7 +48,7 @@ type Options struct {
 	GuildID               string
 	WhitelistChannelID    string
 	NotificationChannelID string
-	UnapprovedRoleID      string
+	ApprovedRoleID        string
 
 	DB      *sql.DB
 	RCON    *rcon.Client
@@ -66,7 +66,7 @@ type Server struct {
 	guildID               string
 	whitelistChannelID    string
 	notificationChannelID string
-	unapprovedRoleID      string
+	approvedRoleID        string
 
 	interactionHandlers map[string]intHandler
 
@@ -91,7 +91,7 @@ func New(opts *Options) (*Server, error) {
 		whitelistChannelID:    opts.WhitelistChannelID,
 		notificationChannelID: opts.NotificationChannelID,
 		guildID:               opts.GuildID,
-		unapprovedRoleID:      opts.UnapprovedRoleID,
+		approvedRoleID:        opts.ApprovedRoleID,
 
 		interactionHandlers: make(map[string]intHandler),
 

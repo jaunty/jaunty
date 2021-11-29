@@ -78,6 +78,13 @@ func (s *Server) handlerApproveWhitelist(ctx context.Context, i *sigil.Interacti
 		return s.interactionError("Whitelisting failed according to flimsy checking"), nil
 	}
 
+	g := s.discord.Guild(s.guildID)
+	err = g.AddMemberRole(ctx, wr.SF, s.approvedRoleID, "Member has been approved.")
+	if err != nil {
+		ctxlog.Error(ctx, "error adding role to member", zap.Error(err), zap.String("sf", wr.SF))
+		return s.interactionError("Unable to add role to member"), nil
+	}
+
 	user, err := s.fetchDiscordUser(ctx, wr.SF)
 	if err != nil {
 		ctxlog.Error(ctx, "error fetching user", zap.Error(err))
@@ -154,11 +161,6 @@ func (s *Server) handlerRejectWhitelist(ctx context.Context, i *sigil.Interactio
 		embuilder.Field("User", fmt.Sprintf("%s#%s", user.Username, user.Discriminator)),
 		embuilder.Color(14880305),
 	)
-
-	g := s.discord.Guild(s.guildID)
-	if err := g.RemoveMember(ctx, user.ID, "Rejected request"); err != nil {
-		return s.interactionError("Unable to kick member."), nil
-	}
 
 	return &sigil.InteractionResponse{
 		Type: sigil.InteractionCallbackTypeUpdateMessage,
