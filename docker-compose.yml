@@ -13,7 +13,8 @@ services:
   jaunty:
     build:
       context: .
-    depends_on: pg
+    depends_on: 
+      - pg
     container_name: jaunty
     restart: unless-stopped
     env_file: .env
