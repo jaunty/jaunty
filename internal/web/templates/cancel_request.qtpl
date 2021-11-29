@@ -1,7 +1,6 @@
 {% code 
     type CancelRequestPage struct {
         *BasePage
-        RequestID int64
     }
 %}
 
@@ -17,7 +16,6 @@
 <div class="columns is-centered">
     <div class="column is-narrow has-text-centered">
         <form method="POST">
-            <input type="hidden" name="id" value="{%dl p.RequestID %}">
             <div class="field">
                 <div class="control">
                     <label class="checkbox">

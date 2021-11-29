@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
-	"strconv"
 	"strings"
 	"time"
 
@@ -82,7 +81,9 @@ func (s *Server) postJoin(w http.ResponseWriter, r *http.Request) {
 
 	sess := s.getSession(r)
 
-	count, err := models.Whitelists(qm.Where("sf = ?", sess.getSnowflake())).Count(ctx, tx)
+	count, err := models.Whitelists(
+		qm.Where("sf = ?", sess.getSnowflake()),
+	).Count(ctx, tx)
 	if err != nil {
 		ctxlog.Error(ctx, "error counting requests in database", zap.Error(err))
 		s.serveError(w, r, "Error counting your requests in the database")
@@ -126,7 +127,7 @@ func (s *Server) dashboard(w http.ResponseWriter, r *http.Request) {
 	sess := s.getSession(r)
 	tx := middleware.TxFromContext(ctx)
 
-	wr, err := models.Whitelists(qm.Where("sf = ?", sess.getSnowflake())).All(ctx, tx)
+	wr, err := modelsx.Requests(ctx, tx, sess.getSnowflake())
 	if err != nil {
 		ctxlog.Error(ctx, "error getting whitelist requests", zap.Error(err), zap.String("sf", sess.getSnowflake()))
 		s.serveError(w, r, "Unable to fetch whitelist requests")
@@ -170,21 +171,10 @@ func (s *Server) postAccountDelete(w http.ResponseWriter, r *http.Request) {
 	sf := sess.getSnowflake()
 	tx := middleware.TxFromContext(ctx)
 
-	user, err := models.Users(qm.Where("sf = ?", sf)).One(ctx, tx)
+	err := modelsx.DeleteAccount(ctx, tx, sf)
 	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			s.serveError(w, r, "User doesn't exist")
-			return
-		}
-
-		ctxlog.Error(ctx, "error querying user from database", zap.Error(err))
-		s.serveError(w, r, "Unable to query user from database")
-		return
-	}
-
-	if err := user.Delete(ctx, tx); err != nil {
-		ctxlog.Error(ctx, "error removing user from database", zap.Error(err))
-		s.serveError(w, r, "Unable to delete user from database")
+		ctxlog.Error(ctx, "error deleting user account", zap.Error(err))
+		s.serveError(w, r, "Unable to delete account.")
 		return
 	}
 
@@ -224,58 +214,33 @@ func (s *Server) postAccountDelete(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) requestCancel(w http.ResponseWriter, r *http.Request) {
-	id := r.URL.Query().Get("id")
-	if id == "" {
-		s.serveError(w, r, "Request ID is blank, doofus")
-		return
-	}
-
-	i, err := strconv.ParseInt(id, 10, 64)
-	if err != nil {
-		s.serveError(w, r, "Unable to parse request ID into int64")
+	uuid := r.URL.Query().Get("uuid")
+	if uuid == "" {
+		s.serveError(w, r, "Account UUID is blank, doofus")
 		return
 	}
 
 	templates.WritePageTemplate(w, &templates.CancelRequestPage{
-		BasePage:  s.basePage(r),
-		RequestID: i,
+		BasePage: s.basePage(r),
 	})
 }
 
 func (s *Server) postRequestCancel(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-
-	if err := r.ParseForm(); err != nil {
-		ctxlog.Error(ctx, "error parsing form", zap.Error(err))
-		s.serveError(w, r, "Unable to parse HTML form")
-		return
-	}
-
-	id := r.FormValue("id")
-	i, err := strconv.ParseInt(id, 10, 64)
-	if err != nil {
-		s.serveError(w, r, "Unable to parse request ID into int64")
-		return
-	}
-
 	tx := middleware.TxFromContext(ctx)
-
 	sess := s.getSession(r)
-	req, err := models.Whitelists(qm.Where("id = ? AND sf = ?", i, sess.getSnowflake())).One(ctx, tx)
+	sf := sess.getSnowflake()
+
+	uuid := r.FormValue("uuid")
+	err := modelsx.CancelRequest(ctx, tx, sf, uuid)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			s.serveError(w, r, "Request does not exist, or it's not yours to delete")
+			s.serveError(w, r, "Request does not exist, or it's not yours to cancel")
 			return
 		}
 
 		ctxlog.Error(ctx, "error getting whitelist request from database", zap.Error(err))
 		s.serveError(w, r, "Unable to query your request from the database")
-		return
-	}
-
-	if err := req.Delete(ctx, tx); err != nil {
-		ctxlog.Error(ctx, "error deleting whitelist request", zap.Error(err))
-		s.serveError(w, r, "Unable to remove request from the database")
 		return
 	}
 
@@ -287,8 +252,8 @@ func (s *Server) postRequestCancel(w http.ResponseWriter, r *http.Request) {
 
 	templates.WritePageTemplate(w, &templates.SuccessPage{
 		BasePage:  s.basePage(r),
-		PageTitle: "Request Deleted",
-		Header:    "Your request has been deleted",
+		PageTitle: "Request Cancelled",
+		Header:    "Your request has been cancelled",
 		SubHeader: "Later, idiot!!",
 	})
 }
