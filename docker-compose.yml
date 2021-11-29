@@ -11,8 +11,7 @@ services:
     volumes:
       - /var/lib/postgresql/data:/var/lib/postgresql/data
   jaunty:
-    build:
-      context: .
+    build: https://github.com/jaunty/jaunty.git
     depends_on:
       - pg
     container_name: jaunty
