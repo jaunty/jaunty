@@ -13,7 +13,6 @@ services:
   jaunty:
     build:
       context: .
-      Dockerfile: Dockerfile
     depends_on:
       - pg
     container_name: jaunty
