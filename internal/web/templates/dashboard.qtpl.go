@@ -129,7 +129,7 @@ func (p *DashboardPage) StreamBody(qw422016 *qt422016.Writer) {
 //line internal/web/templates/dashboard.qtpl:60
 			qw422016.N().S(`
                 <div class="column is-narrow box mb-0 mr-3">
-                    <a class="delete is-pulled-right" href="/dashboard/request/cancel?uuid=`)
+                    <a class="delete is-pulled-right" href="/dashboard/request/delete?uuid=`)
 //line internal/web/templates/dashboard.qtpl:62
 			qw422016.E().S(wr.UUID)
 //line internal/web/templates/dashboard.qtpl:62

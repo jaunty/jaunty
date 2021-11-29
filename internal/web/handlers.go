@@ -67,7 +67,9 @@ func (s *Server) postJoin(w http.ResponseWriter, r *http.Request) {
 
 	tx := middleware.TxFromContext(ctx)
 
-	exists, err := models.Whitelists(qm.Where("uuid = ?", uid)).Exists(ctx, tx)
+	exists, err := models.Whitelists(
+		qm.Where("uuid = ?", uid),
+	).Exists(ctx, tx)
 	if err != nil {
 		ctxlog.Error(ctx, "error getting whitelist from database", zap.Error(err))
 		s.serveError(w, r, "Error checking request's existence in the database")
@@ -213,34 +215,53 @@ func (s *Server) postAccountDelete(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func (s *Server) requestCancel(w http.ResponseWriter, r *http.Request) {
+func (s *Server) requestDelete(w http.ResponseWriter, r *http.Request) {
 	uuid := r.URL.Query().Get("uuid")
 	if uuid == "" {
 		s.serveError(w, r, "Account UUID is blank, doofus")
 		return
 	}
 
-	templates.WritePageTemplate(w, &templates.CancelRequestPage{
+	templates.WritePageTemplate(w, &templates.DeleteRequestPage{
 		BasePage: s.basePage(r),
 	})
 }
 
-func (s *Server) postRequestCancel(w http.ResponseWriter, r *http.Request) {
+func (s *Server) postRequestDelete(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	tx := middleware.TxFromContext(ctx)
 	sess := s.getSession(r)
 	sf := sess.getSnowflake()
 
 	uuid := r.FormValue("uuid")
-	err := modelsx.CancelRequest(ctx, tx, sf, uuid)
+	err := modelsx.DeleteRequest(ctx, tx, sf, uuid)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			s.serveError(w, r, "Request does not exist, or it's not yours to cancel")
+			s.serveError(w, r, "Request does not exist, or it's not yours to delete")
 			return
 		}
 
 		ctxlog.Error(ctx, "error getting whitelist request from database", zap.Error(err))
 		s.serveError(w, r, "Unable to query your request from the database")
+		return
+	}
+
+	un, err := s.fetchMojangUsernameByUUID(ctx, uuid)
+	if err != nil {
+		ctxlog.Error(ctx, "error fetching username by uuid", zap.Error(err), zap.String("uuid", uuid))
+		s.serveError(w, r, "Unable to fetch Minecraft username.")
+		return
+	}
+
+	dewhitelisted, err := s.rcon.UnwhitelistUser(un)
+	if err != nil {
+		ctxlog.Error(ctx, "error removing user from the whitelist", zap.Error(err), zap.String("username", un))
+		s.serveError(w, r, "Unable to remove you from the whitelist.")
+		return
+	}
+
+	if !dewhitelisted {
+		s.serveError(w, r, "Unable to remove you from the whitelist.")
 		return
 	}
 
@@ -252,8 +273,8 @@ func (s *Server) postRequestCancel(w http.ResponseWriter, r *http.Request) {
 
 	templates.WritePageTemplate(w, &templates.SuccessPage{
 		BasePage:  s.basePage(r),
-		PageTitle: "Request Cancelled",
-		Header:    "Your request has been cancelled",
+		PageTitle: "Request Delete",
+		Header:    "Your request has been deleted",
 		SubHeader: "Later, idiot!!",
 	})
 }

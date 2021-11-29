@@ -7,8 +7,8 @@ import (
 	"github.com/disaccord/beelzebub"
 	"github.com/jaunty/jaunty/internal/pkg/api/mojang"
 	"github.com/jaunty/jaunty/internal/pkg/dbx"
+	"github.com/jaunty/jaunty/internal/pkg/rcon"
 	"github.com/jaunty/jaunty/internal/web"
-	"github.com/willroberts/minecraft-client"
 	"github.com/zikaeroh/ctxlog"
 	"golang.org/x/oauth2"
 )
@@ -24,8 +24,10 @@ type Web struct {
 	SessionKey string `help:"Secret key for session encryption." required:"" env:"JAUNTY_SESSION_KEY"`
 	PublicKey  string `help:"Discord application's public key." required:"" env:"JAUNTY_DISCORD_PUBLIC_KEY"`
 
-	DSN  string `help:"PostgreSQL DSN." required:"" env:"JAUNTY_DB_DSN"`
-	RCON string `help:"Address to RCON server." required:"" env:"JAUNTY_RCON_ADDR"`
+	DSN string `help:"PostgreSQL DSN." required:"" env:"JAUNTY_DB_DSN"`
+
+	RCON         string `help:"Address to an RCON server." required:"" env:"JAUNTY_RCON_ADDR"`
+	RCONPassword string `help:"Password for the RCON server." required:"" env:"JAUNTY_RCON_PASSWORD"`
 
 	GuildID               string `help:"Guild ID for the associated Discord" required:"" env:"JAUNTY_GUILD_ID"`
 	WhitelistChannelID    string `help:"Channel ID for the whitelist notifications channel" required:"" env:"JAUNTY_WHITELIST_CHANNEL_ID"`
@@ -54,12 +56,12 @@ func (w *Web) Run(ctx context.Context, debug bool) error {
 
 	defer db.Close()
 
-	rcon, err := minecraft.NewClient(w.RCON)
-	if err != nil {
+	rc := rcon.New()
+	if err := rc.Connect(w.RCON, w.RCONPassword); err != nil {
 		return err
 	}
 
-	defer rcon.Close()
+	defer rc.Close()
 
 	oa := &oauth2.Config{
 		ClientID:     w.ClientID,
@@ -92,7 +94,7 @@ func (w *Web) Run(ctx context.Context, debug bool) error {
 		NotificationChannelID: w.NotificationChannelID,
 		UnapprovedRoleID:      w.UnapprovedRoleID,
 
-		RCON:    rcon,
+		RCON:    rc,
 		Discord: dsc,
 		OAuth2:  oa,
 		Mojang:  mojang.New(),

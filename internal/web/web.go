@@ -14,9 +14,9 @@ import (
 	"github.com/holedaemon/web"
 	"github.com/holedaemon/web/middleware"
 	"github.com/jaunty/jaunty/internal/pkg/api/mojang"
+	"github.com/jaunty/jaunty/internal/pkg/rcon"
 	"github.com/jaunty/jaunty/internal/web/templates"
 	"github.com/patrickmn/go-cache"
-	"github.com/willroberts/minecraft-client"
 	"github.com/zikaeroh/ctxlog"
 	"golang.org/x/oauth2"
 )
@@ -51,7 +51,7 @@ type Options struct {
 	UnapprovedRoleID      string
 
 	DB      *sql.DB
-	RCON    *minecraft.Client
+	RCON    *rcon.Client
 	OAuth2  *oauth2.Config
 	Discord *beelzebub.Devil
 	Mojang  *mojang.Client
@@ -77,7 +77,7 @@ type Server struct {
 
 	cache *cache.Cache
 
-	rcon *minecraft.Client
+	rcon *rcon.Client
 	db   *sql.DB
 }
 
@@ -100,6 +100,7 @@ func New(opts *Options) (*Server, error) {
 		discord: opts.Discord,
 		oauth2:  opts.OAuth2,
 		mojang:  opts.Mojang,
+		rcon:    opts.RCON,
 
 		cache: cache.New(cacheExpir, cacheExpir),
 
@@ -133,8 +134,8 @@ func (s *Server) router(ctx context.Context) *chi.Mux {
 		r.Get("/dashboard", s.dashboard)
 		r.Get("/dashboard/account/delete", s.accountDelete)
 		r.Post("/dashboard/account/delete", s.postAccountDelete)
-		r.Get("/dashboard/request/cancel", s.requestCancel)
-		r.Post("/dashboard/request/cancel", s.postRequestCancel)
+		r.Get("/dashboard/request/delete", s.requestDelete)
+		r.Post("/dashboard/request/delete", s.postRequestDelete)
 	})
 
 	r.Get("/login", s.authDiscord)

@@ -56,8 +56,8 @@ func RejectRequest(ctx context.Context, exec boil.ContextTransactor, sf, uuid st
 	return nil
 }
 
-// CancelRequest cancels a request.
-func CancelRequest(ctx context.Context, exec boil.ContextTransactor, sf, uuid string) error {
+// DeleteRequest deletes a request.
+func DeleteRequest(ctx context.Context, exec boil.ContextTransactor, sf, uuid string) error {
 	w, err := models.Whitelists(
 		qm.Where("sf = ?", sf),
 		qm.Where("uuid = ?", uuid),
@@ -66,8 +66,7 @@ func CancelRequest(ctx context.Context, exec boil.ContextTransactor, sf, uuid st
 		return err
 	}
 
-	w.WhitelistStatus = models.WhitelistStatusCancelled
-	return w.Update(ctx, exec, boil.Infer())
+	return w.Delete(ctx, exec)
 }
 
 // DeleteRequests deletes all of a User's requests.

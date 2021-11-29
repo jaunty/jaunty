@@ -62,6 +62,22 @@ func (s *Server) handlerApproveWhitelist(ctx context.Context, i *sigil.Interacti
 		return s.interactionError("Unable to commit transaction"), nil
 	}
 
+	ru, err := s.mojang.FetchUsernameByUUID(ctx, wr.UUID)
+	if err != nil {
+		ctxlog.Error(ctx, "error fetching minecraft username by uuid", zap.Error(err))
+		return s.interactionError("Unable to fetch Minecraft username"), nil
+	}
+
+	whitelisted, err := s.rcon.WhitelistUser(ru)
+	if err != nil {
+		ctxlog.Error(ctx, "unable to whitelist user", zap.Error(err))
+		return s.interactionError("Error whitelisting user"), nil
+	}
+
+	if !whitelisted {
+		return s.interactionError("Whitelisting failed according to flimsy checking"), nil
+	}
+
 	user, err := s.fetchDiscordUser(ctx, wr.SF)
 	if err != nil {
 		ctxlog.Error(ctx, "error fetching user", zap.Error(err))
@@ -109,6 +125,22 @@ func (s *Server) handlerRejectWhitelist(ctx context.Context, i *sigil.Interactio
 	if err := tx.Commit(); err != nil {
 		ctxlog.Error(ctx, "error committing transaction", zap.Error(err))
 		return s.interactionError("Unable to commit transaction"), nil
+	}
+
+	ru, err := s.fetchMojangUsernameByUUID(ctx, wr.UUID)
+	if err != nil {
+		ctxlog.Error(ctx, "error fetching username by UUID", zap.String("UUID", wr.UUID), zap.Error(err))
+		return s.interactionError("Unable to fetch username by UUID"), nil
+	}
+
+	dewhitelisted, err := s.rcon.UnwhitelistUser(ru)
+	if err != nil {
+		ctxlog.Error(ctx, "error unwhitelisting user", zap.Error(err), zap.String("user", ru))
+		return s.interactionError("Unable to remove user from the whitelist"), nil
+	}
+
+	if !dewhitelisted {
+		return s.interactionError(fmt.Sprintf("Removing %s from the whitelist failed according to flimsy checking", ru)), nil
 	}
 
 	user, err := s.fetchDiscordUser(ctx, wr.SF)

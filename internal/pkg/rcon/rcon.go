@@ -28,6 +28,11 @@ func (c *Client) Connect(addr, password string) error {
 	return cli.Authenticate(password)
 }
 
+// Close closes a connection.
+func (c *Client) Close() error {
+	return c.cli.Close()
+}
+
 func (c *Client) sendCommand(cmd, expectation string, startsWith bool) (bool, error) {
 	msg, err := c.cli.SendCommand(cmd)
 	if err != nil {
@@ -47,8 +52,8 @@ func (c *Client) sendCommand(cmd, expectation string, startsWith bool) (bool, er
 // WhitelistUser adds the given username to the whitelist.
 func (c *Client) WhitelistUser(username string) (bool, error) {
 	return c.sendCommand(
-		fmt.Sprintf("whitelist remove %s", username),
-		fmt.Sprintf("removed %s from the whitelist", username),
+		fmt.Sprintf("whitelist add %s", username),
+		fmt.Sprintf("added %s to the whitelist", username),
 		false,
 	)
 }
