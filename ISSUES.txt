@@ -1,3 +1,0 @@
-Auth redirect doesn't work correctly
-Unapproved role isn't being applied
-Whitelist embeds have weird dates

@@ -320,6 +320,10 @@ func (s *Server) authDiscordCallback(w http.ResponseWriter, r *http.Request) {
 		panic("redirect string is not a string???")
 	}
 
+	if redir == "" {
+		redir = "/"
+	}
+
 	token, err := s.oauth2.Exchange(ctx, r.FormValue("code"))
 	if err != nil {
 		ctxlog.Error(ctx, "error exchanging code", zap.Error(err))
