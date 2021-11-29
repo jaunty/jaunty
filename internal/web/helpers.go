@@ -3,7 +3,9 @@ package web
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/jaunty/jaunty/internal/web/templates"
 	"github.com/zikaeroh/ctxlog"
@@ -28,4 +30,13 @@ func respondJSON(ctx context.Context, w http.ResponseWriter, data interface{}) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write(body)
+}
+
+func getRedirect(to string, r *http.Request) string {
+	pth := r.URL.Path
+	if !strings.HasPrefix(pth, "/") {
+		pth = "/" + pth
+	}
+
+	return fmt.Sprintf("%s?redirect=%s", to, pth)
 }

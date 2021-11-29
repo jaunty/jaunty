@@ -22,8 +22,12 @@ func (s *Server) authenticator(next http.Handler) http.Handler {
 		user, err := models.Users(qm.Where("sf = ?", sess.getSnowflake())).One(ctx, tx)
 		if err != nil {
 			if errors.Is(err, sql.ErrNoRows) {
-				ctxlog.Info(ctx, "user without an account tried to access an authenticated page", zap.String("sf", sess.getSnowflake()))
-				s.serveError(w, r, "The page you're trying to access requires that you're logged in!!")
+				http.Redirect(
+					w,
+					r,
+					getRedirect("/login", r),
+					http.StatusSeeOther,
+				)
 				return
 			}
 
@@ -40,7 +44,12 @@ func (s *Server) authenticator(next http.Handler) http.Handler {
 		}
 
 		if sess.isNew() {
-			s.serveError(w, r, "The page you're trying to access requires that you're logged in!!")
+			http.Redirect(
+				w,
+				r,
+				getRedirect("/login", r),
+				http.StatusSeeOther,
+			)
 			return
 		}
 
