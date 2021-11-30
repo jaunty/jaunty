@@ -38,7 +38,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     
     - name: Build Image
-      run: docker build --file Dockerfile --tag jaunty:latest,jaunty:${{ env.JAUNTY_VERSION}} --build-arg version=${{ env.JAUNTY_VERSION }} .
+      run: docker build --file Dockerfile --tag jaunty:latest --tag jaunty:${{ env.JAUNTY_VERSION}} --build-arg version=${{ env.JAUNTY_VERSION }} .
     
     - name: Push to GitHub
       if: ${{ github.repository == 'jaunty/jaunty' && github.event_name == 'push' && github.ref == 'refs/heads/trunk' }}
