@@ -29,7 +29,7 @@ func respondJSON(ctx context.Context, w http.ResponseWriter, data interface{}) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	w.Write(body)
+	w.Write(body) //nolint:errcheck
 }
 
 func getRedirect(to string, r *http.Request) string {
