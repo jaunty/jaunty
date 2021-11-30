@@ -46,3 +46,5 @@ jobs:
         echo '${{ secrets.GITHUB_TOKEN }}' | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
         docker tag jaunty:latest ghcr.io/jaunty/jaunty:latest
         docker tag jaunty:${{ env.JAUNTY_VERSION }} ghcr.io/jaunty/jaunty:${{ env.JAUNTY_VERSION }}
+        docker push ghcr.io/jaunty/jaunty:latest
+        docker push ghcr.io/jaunty/jaunty:${{ env.JAUNTY_VERSION }} 
