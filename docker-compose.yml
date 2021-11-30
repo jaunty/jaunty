@@ -17,6 +17,7 @@ services:
     image: ghcr.io/jaunty/jaunty:latest
     container_name: jaunty
     restart: unless-stopped
+    command: web
     env_file:
       - .env
     ports:
