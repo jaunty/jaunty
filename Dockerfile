@@ -7,7 +7,8 @@ RUN go mod download
 
 COPY ./ ./
 
-RUN go build -o jaunty
+ARG version
+RUN go build -ldflags="-X github.com/jaunty/jaunty/internal/pkg/version.version=${version}" -o jaunty
 
 FROM gcr.io/distroless/base:nonroot
 COPY --from=builder /app/jaunty /jaunty
