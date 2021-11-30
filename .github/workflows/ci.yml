@@ -43,7 +43,7 @@ jobs:
     - name: Push to GitHub
       if: ${{ github.repository == 'jaunty/jaunty' && github.event_name == 'push' && github.ref == 'refs/heads/trunk' }}
       run: |
-        echo ${{ secrets.CR_PAT }} | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
+        echo '${{ secrets.GITHUB_TOKEN }}' | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
         docker tag jaunty/jaunty:latest ghcr.io/jaunty/jaunty:latest
         docker tag jaunty/jaunty:${{ env.JAUNTY_VERSION }} ghcr.io/jaunty/jaunty:${{ env.JAUNTY_VERSION }}
         docker push ghcr.io/jaunty/jaunty:latest
